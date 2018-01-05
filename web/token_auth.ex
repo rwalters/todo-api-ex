@@ -9,7 +9,7 @@ defmodule TokenAuth do
   def call(conn, _opts) do
     case get_req_header(conn, "authorization") do
       ["Token token=" <> token] ->
-        if find_token(token) == {:ok} do
+        if find_token(token) do
           conn
         else
           unauthorized(conn)
@@ -33,9 +33,9 @@ defmodule TokenAuth do
     |> Exredis.Api.get(token)
     |> case do
       :undefined ->
-        {:error}
+        false
       _ ->
-        {:ok}
+        true
     end
   end
 end
