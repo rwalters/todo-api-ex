@@ -26,6 +26,7 @@ defmodule TokenAuth do
   end
 
   defp find_token(token) do
+    token = String.replace(token, ~r/"/, "")
     {:ok, client} = Exredis.start_link
 
     client
