@@ -10,6 +10,7 @@ defmodule Todo.AuthenticationController do
 
   defp token do
     Ecto.UUID.generate()
+    "abcdef"
   end
 
   defp expires_at do

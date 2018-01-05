@@ -1,14 +1,14 @@
-defmodule BasicAuth do
+defmodule TokenAuth do
   import Plug.Conn
 
   def init(opts) do
     opts
   end
 
-  def call(conn, [username: username, password: password]) do
+  def call(conn, _opts) do
     case get_req_header(conn, "authorization") do
-      ["Basic " <> auth] ->
-        if auth == encode(username, password) do
+      ["Token token=" <> token] ->
+        if token == "\"abcdef\"" do
           conn
         else
           unauthorized(conn)
@@ -17,8 +17,6 @@ defmodule BasicAuth do
         unauthorized(conn)
     end
   end
-
-  defp encode(username, password), do: Base.encode64(username <> ":" <> password)
 
   defp unauthorized(conn) do
     conn
