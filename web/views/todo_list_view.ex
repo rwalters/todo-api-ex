@@ -9,10 +9,6 @@ defmodule Todo.ListView do
     render_one(list, Todo.ListView, "list.json")
   end
 
-  def render("create.json", %{list: list}) do
-    render_one(list, Todo.ListView, "list.json")
-  end
-
   def render("update.json", %{list: list}) do
     "#{list.name} updated"
   end
