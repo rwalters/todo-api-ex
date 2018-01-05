@@ -3,6 +3,7 @@ defmodule Todo.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug BasicAuth, username: "username", password: "password"
   end
 
   scope "/api", Todo do

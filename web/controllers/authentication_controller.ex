@@ -1,6 +1,7 @@
 defmodule Todo.AuthenticationController do
-  use Todo.Web, :controller
+  import Plug.Conn
 
+  use Todo.Web, :controller
   use Timex
 
   def authenticate(conn, _params) do
