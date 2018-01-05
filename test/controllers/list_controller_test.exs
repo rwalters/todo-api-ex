@@ -23,10 +23,16 @@ defmodule Todo.ListControllerTest do
   end
 
   test "GET /api/lists with authentication returns lists", %{conn: conn} do
+    {:ok, list_1} = Todo.Repo.insert(%Todo.List{name: "Shopping"})
+    {:ok, list_2} = Todo.Repo.insert(%Todo.List{name: "Groceries"})
+
     conn = conn
            |> with_valid_auth_token_header
            |> get("/api/lists")
-    assert json_response(conn, 200) == %{"lists" => []}
+    assert json_response(conn, 200) == %{"lists" => [
+      %{"id" => list_1.uuid, "name" => list_1.name, "src" => "http://localhost:4000/lists/#{list_1.uuid}"},
+      %{"id" => list_2.uuid, "name" => list_2.name, "src" => "http://localhost:4000/lists/#{list_2.uuid}"},
+    ]}
   end
 
   test "GET /api/list/:id without authentication throws 401", %{conn: conn} do
