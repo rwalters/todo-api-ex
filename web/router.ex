@@ -25,6 +25,6 @@ defmodule Todo.Router do
     get "/lists/:id", ListController, :show
     post "/lists", ListController, :create
     delete "/lists/:id", ListController, :delete
-    # patch "/lists/:id", ListController, :update
+    patch "/lists/:id", ListController, :update
   end
 end

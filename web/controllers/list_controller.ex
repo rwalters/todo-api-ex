@@ -3,7 +3,6 @@ defmodule Todo.ListController do
 
   alias Todo.{Repo, List}
   alias Todo.{ErrorView, Repo, List}
-  alias Plug.Conn
 
   def index(conn, _params) do
     lists = Repo.all(List)
@@ -26,9 +25,28 @@ defmodule Todo.ListController do
 
     with {:ok, list} <- Repo.insert(changeset) do
       conn
-      |> Conn.put_status(201)
+      |> put_status(201)
       |> render("create.json", list: list)
     else
+      {:error, %{errors: errors}} ->
+        conn
+        |> put_status(422)
+        |> render(ErrorView, "422.json", %{errors: errors})
+    end
+  end
+
+  def update(conn, %{"id" => uuid, "list" => params}) do
+    with list = %List{} <- Repo.get(List, uuid),
+      changeset = List.changeset(list, params),
+      {:ok, updated} <- Repo.update(changeset) do
+        conn
+        |> put_status(201)
+        |> render("update.json", list: updated)
+    else
+      nil ->
+        conn
+        |> put_status(422)
+        |> render(ErrorView, "422.json", %{errors: ["Failed to find record"]})
       {:error, %{errors: errors}} ->
         conn
         |> put_status(422)
@@ -40,8 +58,8 @@ defmodule Todo.ListController do
     with list = %List{} <- Repo.get(List, uuid) do
       Repo.delete!(list)
       conn
-      |> Conn.put_status(204)
-      |> Conn.send_resp(:no_content, "")
+      |> put_status(204)
+      |> send_resp(:no_content, "")
     else
       nil ->
         conn

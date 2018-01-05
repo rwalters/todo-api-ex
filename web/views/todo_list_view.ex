@@ -6,11 +6,15 @@ defmodule Todo.ListView do
   end
 
   def render("show.json", %{list: list}) do
-    %{list: render_one(list, Todo.ListView, "list.json")}
+    render_one(list, Todo.ListView, "list.json")
   end
 
   def render("create.json", %{list: list}) do
     render_one(list, Todo.ListView, "list.json")
+  end
+
+  def render("update.json", %{list: list}) do
+    "#{list.name} updated"
   end
 
   def render("list.json", %{list: list}) do
