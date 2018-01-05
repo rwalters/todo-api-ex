@@ -7,5 +7,6 @@ defmodule Todo.Router do
 
   scope "/api", Todo do
     pipe_through :api
+    get "/", ListsController, :index
   end
 end
