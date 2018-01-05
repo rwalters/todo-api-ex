@@ -48,7 +48,6 @@ defmodule Todo.Web do
       import Phoenix.Controller, only: [get_flash: 2, view_module: 1]
 
       import Todo.Router.Helpers
-      import Todo.ErrorHelpers
       import Todo.Gettext
     end
   end

@@ -5,8 +5,8 @@ defmodule Todo.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", Todo do
+  scope "/", Todo do
     pipe_through :api
-    get "/", ListsController, :index
+    get "/", ListController, :index
   end
 end

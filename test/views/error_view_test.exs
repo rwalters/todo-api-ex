@@ -14,6 +14,11 @@ defmodule Todo.ErrorViewTest do
            %{errors: %{detail: "Internal server error"}}
   end
 
+  test "renders 422.json" do
+    assert render(Todo.ErrorView, "422.json", []) ==
+      %{errors: %{detail: "Bad request"}}
+  end
+
   test "render any other" do
     assert render(Todo.ErrorView, "505.json", []) ==
            %{errors: %{detail: "Internal server error"}}
