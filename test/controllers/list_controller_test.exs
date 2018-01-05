@@ -29,6 +29,15 @@ defmodule Todo.ListControllerTest do
     assert json_response(conn, 200) == %{"lists" => []}
   end
 
+  test "GET /api/list/:id without authentication throws 401", %{conn: conn} do
+    {:ok, %{uuid: uuid, name: "Urgent Things"}} = Todo.Repo.insert(%Todo.List{name: "Urgent Things"})
+
+    conn = conn
+           |> with_invalid_auth_token_header
+           |> get("/api/lists/#{uuid}")
+    assert response(conn, 401) == "unauthorized"
+  end
+
   test "GET /api/list/:id with authentication returns list", %{conn: conn} do
     {:ok, %{uuid: uuid, name: "Urgent Things"}} = Todo.Repo.insert(%Todo.List{name: "Urgent Things"})
 
