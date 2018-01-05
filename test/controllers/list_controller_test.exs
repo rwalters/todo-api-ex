@@ -1,5 +1,6 @@
 defmodule Todo.ListControllerTest do
   use Todo.ConnCase
+  require Exredis.Api
 
   def with_valid_auth_token_header(conn) do
     conn
@@ -19,6 +20,9 @@ defmodule Todo.ListControllerTest do
   end
 
   test "GET /api/lists with authentication returns lists", %{conn: conn} do
+    {:ok, client} = Exredis.start_link
+    client |> Exredis.Api.setex("\"abcdef\"", 1, true)
+
     conn = conn
            |> with_valid_auth_token_header
            |> get("/api/lists")

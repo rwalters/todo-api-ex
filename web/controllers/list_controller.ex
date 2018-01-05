@@ -27,7 +27,7 @@ defmodule Todo.ListController do
     with {:ok, list} <- Repo.insert(changeset) do
       conn
       |> Conn.put_status(201)
-      |> render("show.json", list: list)
+      |> render("create.json", list: list)
     else
       {:error, %{errors: errors}} ->
         conn
