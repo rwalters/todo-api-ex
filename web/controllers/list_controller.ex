@@ -35,4 +35,18 @@ defmodule Todo.ListController do
         |> render(ErrorView, "422.json", %{errors: errors})
     end
   end
+
+  def delete(conn, %{"id" => uuid}) do
+    with list = %List{} <- Repo.get(List, uuid) do
+      Repo.delete!(list)
+      conn
+      |> Conn.put_status(204)
+      |> Conn.send_resp(:no_content, "")
+    else
+      nil ->
+        conn
+        |> put_status(404)
+        |> render(ErrorView, "404.json", error: "Not found")
+    end
+  end
 end
