@@ -1,7 +1,7 @@
 defmodule Todo.ErrorView do
   use Todo.Web, :view
 
-  def render("404.json", _assigns) do
+  def render("404.json", assigns) do
     %{errors: %{detail: "Resource not found"}}
   end
 

@@ -1,7 +1,6 @@
 defmodule Todo.ItemController do
   use Todo.Web, :controller
 
-  alias Todo.{Repo, List, Item}
   alias Todo.{ErrorView, Repo, List, Item}
 
   def create(conn, %{"list_id" => list_id, "item" => %{"name" => name}}) do

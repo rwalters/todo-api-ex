@@ -1,7 +1,6 @@
 defmodule Todo.ListController do
   use Todo.Web, :controller
 
-  alias Todo.{Repo, List}
   alias Todo.{ErrorView, Repo, List}
 
   def index(conn, _params) do
