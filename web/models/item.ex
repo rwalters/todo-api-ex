@@ -15,7 +15,7 @@ defmodule Todo.Item do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name, :id])
+    |> cast(params, [:name, :id, :finished_at])
     |> validate_required([:name])
   end
 end

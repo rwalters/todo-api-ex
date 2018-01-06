@@ -6,6 +6,7 @@ defmodule Todo.Repo.Migrations.CreateItem do
       add :id, :uuid, primary_key: true
       add :name, :string
       add :list_id, references(:lists, type: :uuid, on_delete: :delete_all)
+      add :finished_at, :utc_datetime
     end
   end
 end
