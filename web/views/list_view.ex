@@ -15,8 +15,8 @@ defmodule Todo.ListView do
 
   def render("list.json", %{list: list}) do
     %{
-      id: list.uuid,
-      src: "http://localhost:4000/lists/#{list.uuid}",
+      id: list.id,
+      src: "http://localhost:4000/lists/#{list.id}",
       name: list.name,
     }
   end

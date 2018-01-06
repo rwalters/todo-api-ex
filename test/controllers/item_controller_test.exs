@@ -17,7 +17,7 @@ defmodule Todo.ItemControllerTest do
   end
 
   test "POST /lists/:list_id/items without authentication throws 401", %{conn: conn} do
-    {:ok, %{uuid: uuid, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
+    {:ok, %{id: uuid, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
 
     payload = %{
       item: %{
@@ -31,7 +31,7 @@ defmodule Todo.ItemControllerTest do
   end
 
   test "POST /lists/:list_id/items with authentication creates item", %{conn: conn} do
-    {:ok, %{uuid: list_id, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
+    {:ok, %{id: list_id, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
 
     payload = %{
       item: %{

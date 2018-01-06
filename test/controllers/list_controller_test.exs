@@ -30,13 +30,13 @@ defmodule Todo.ListControllerTest do
            |> with_valid_auth_token_header
            |> get("/api/lists")
     assert json_response(conn, 200) == %{"lists" => [
-      %{"id" => list_1.uuid, "name" => list_1.name, "src" => "http://localhost:4000/lists/#{list_1.uuid}"},
-      %{"id" => list_2.uuid, "name" => list_2.name, "src" => "http://localhost:4000/lists/#{list_2.uuid}"},
+      %{"id" => list_1.id, "name" => list_1.name, "src" => "http://localhost:4000/lists/#{list_1.id}"},
+      %{"id" => list_2.id, "name" => list_2.name, "src" => "http://localhost:4000/lists/#{list_2.id}"},
     ]}
   end
 
   test "GET /api/list/:id without authentication throws 401", %{conn: conn} do
-    {:ok, %{uuid: uuid, name: "Urgent Things"}} = Todo.Repo.insert(%Todo.List{name: "Urgent Things"})
+    {:ok, %{id: uuid, name: "Urgent Things"}} = Todo.Repo.insert(%Todo.List{name: "Urgent Things"})
 
     conn = conn
            |> with_invalid_auth_token_header
@@ -45,7 +45,7 @@ defmodule Todo.ListControllerTest do
   end
 
   test "GET /api/list/:id with authentication returns list", %{conn: conn} do
-    {:ok, %{uuid: uuid, name: "Urgent Things"}} = Todo.Repo.insert(%Todo.List{name: "Urgent Things"})
+    {:ok, %{id: uuid, name: "Urgent Things"}} = Todo.Repo.insert(%Todo.List{name: "Urgent Things"})
 
     conn = conn
            |> with_valid_auth_token_header
@@ -55,7 +55,7 @@ defmodule Todo.ListControllerTest do
   end
 
   test "PATCH /api/lists/:id without authentication throws 401", %{conn: conn} do
-    {:ok, %{uuid: uuid, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
+    {:ok, %{id: uuid, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
 
     payload = %{
       list: %{
@@ -70,7 +70,7 @@ defmodule Todo.ListControllerTest do
   end
 
   test "PATCH /api/lists/:id with authentication updates list", %{conn: conn} do
-    {:ok, %{uuid: uuid, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
+    {:ok, %{id: uuid, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
 
     payload = %{
       list: %{
@@ -85,7 +85,7 @@ defmodule Todo.ListControllerTest do
   end
 
   test "DELETE /api/lists/:id without authentication throws 401", %{conn: conn} do
-    {:ok, %{uuid: uuid, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
+    {:ok, %{id: uuid, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
 
     conn = conn
            |> with_invalid_auth_token_header
@@ -94,7 +94,7 @@ defmodule Todo.ListControllerTest do
   end
 
   test "DELETE /api/lists/:id with authentication updates list", %{conn: conn} do
-    {:ok, %{uuid: uuid, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
+    {:ok, %{id: uuid, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
 
     conn = conn
            |> with_valid_auth_token_header

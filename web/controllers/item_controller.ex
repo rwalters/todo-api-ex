@@ -1,12 +1,12 @@
 defmodule Todo.ItemController do
   use Todo.Web, :controller
 
-  alias Todo.{Repo, List, Item}
-  alias Todo.{ErrorView, Repo, List, Item}
+  alias Todo.{Repo, List}
+  alias Todo.{ErrorView, Repo, List}
 
   def create(conn, %{"list_id" => uuid, "item" => %{"name" => name}}) do
-    with %List{} <- Repo.get(List, uuid),
-      changeset = Item.changeset(%Item{}, %{"list_id" => uuid, "name" => name}),
+    with list = %List{} <- Repo.get(List, uuid),
+         changeset = Ecto.build_assoc(list, :items, name: name),
       {:ok, item} <- Repo.insert(changeset) do
 
       conn

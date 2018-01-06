@@ -1,11 +1,12 @@
 defmodule Todo.List do
   use Todo.Web, :model
 
-  @primary_key {:uuid, :binary_id, [autogenerate: true]}
+  @primary_key {:id, :binary_id, [autogenerate: true]}
+  @derive {Phoenix.Param, key: :id}
 
-  schema "list" do
+  schema "lists" do
     field :name, :string
-    has_many :items, Todo.Item, foreign_key: :list_id
+    has_many :items, Todo.Item
   end
 
   @doc """
@@ -13,7 +14,7 @@ defmodule Todo.List do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name, :uuid])
+    |> cast(params, [:name, :id])
     |> validate_required([:name])
   end
 end
