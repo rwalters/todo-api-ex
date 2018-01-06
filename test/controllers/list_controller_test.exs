@@ -58,12 +58,14 @@ defmodule Todo.ListControllerTest do
     {:ok, %{id: uuid, name: "Urgent Things"}=list} = Todo.Repo.insert(%Todo.List{name: "Urgent Things"})
     changeset = Ecto.build_assoc(list, :items, name: "Buy Milk")
     Repo.insert(changeset)
+    changeset = Ecto.build_assoc(list, :items, name: "Buy Onions")
+    Repo.insert(changeset)
 
     conn = conn
            |> with_valid_auth_token_header
            |> get("/api/lists/#{uuid}")
-    %{"name" => "Urgent Things", "id" => _id, "src" => _src, "items" => [item]} = json_response(conn, 200)
-    assert item["name"] == "Buy Milk"
+    %{"name" => "Urgent Things", "id" => _id, "src" => _src, "items" => items} = json_response(conn, 200)
+    assert Enum.map(items, &(&1["name"])) == ["Buy Milk", "Buy Onions"]
   end
 
   test "PATCH /api/lists/:id without authentication throws 401", %{conn: conn} do
