@@ -10,7 +10,8 @@ defmodule Todo.ListController do
   end
 
   def show(conn, %{"id" => uuid}) do
-    with list = %List{} <- Repo.get(List, uuid) do
+    with list = %List{} <- Repo.get(List, uuid)
+                |> Repo.preload(:items) do
       render(conn, "show.json", list: list)
     else
       nil ->
@@ -26,7 +27,7 @@ defmodule Todo.ListController do
     with {:ok, list} <- Repo.insert(changeset) do
       conn
       |> put_status(201)
-      |> render("show.json", list: list)
+      |> render("create.json", list: list)
     else
       {:error, %{errors: errors}} ->
         conn
