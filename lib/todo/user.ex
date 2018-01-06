@@ -14,20 +14,15 @@ defmodule Todo.User do
   def changeset(%User{} = user, attrs) do
     user
     |> cast(attrs, [:username, :password])
-    |> registration_changeset
-  end
-
-  def registration_changeset(changeset) do
-    changeset
     |> validate_required([:username, :password])
     |> validate_length(:password, min: 8)
     |> encrypt_username_and_password()
   end
 
-  def encrypt_username_and_password(%Ecto.Changeset{valid?: true, changes: %{password: username, username: password}} = changeset) do
-   put_change(
+  def encrypt_username_and_password(%Ecto.Changeset{valid?: true, changes: %{username: username, password: password}} = changeset) do
+    put_change(
       changeset,
-      :encrypted_username_and_password,
+      :encrypted_username_password,
       encode(username, password)
     )
   end
