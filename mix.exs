@@ -41,8 +41,6 @@ defmodule Todo.Mixfile do
       {:cowboy, "~> 1.0"},
       {:timex, "~> 3.1"},
       {:exredis, ">= 0.2.4"},
-      {:comeonin, "~> 4.0"},
-      {:bcrypt_elixir, "~> 1.0"},
     ]
   end
 
