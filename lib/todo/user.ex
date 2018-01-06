@@ -6,6 +6,7 @@ defmodule Todo.User do
   schema "users" do
     field :encrypted_password, :string
     field :username, :string
+    field :password, :string, virtual: true
 
     timestamps()
   end
@@ -14,6 +15,7 @@ defmodule Todo.User do
   def changeset(%User{} = user, attrs) do
     user
     |> cast(attrs, [:username, :encrypted_password])
+    |> unique_constraint(:username)
     |> validate_required([:username, :encrypted_password])
   end
 end
