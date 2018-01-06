@@ -1,13 +1,14 @@
-defmodule Todo.Item do
-  use Todo.Web, :model
+defmodule Todo.List do
+  use Ecto.Schema
+  import Ecto.Changeset
 
   @primary_key {:id, :binary_id, [autogenerate: true]}
+  @foreign_key_type :binary_id
   @derive {Phoenix.Param, key: :id}
 
-  schema "items" do
+  schema "lists" do
     field :name, :string
-    field :finished_at, :utc_datetime
-    belongs_to :list, Todo.List
+    has_many :items, Todo.Item
   end
 
   @doc """
@@ -15,7 +16,7 @@ defmodule Todo.Item do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name, :id, :finished_at])
+    |> cast(params, [:name, :id])
     |> validate_required([:name])
   end
 end
