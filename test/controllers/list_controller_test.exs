@@ -103,9 +103,14 @@ defmodule Todo.ListControllerTest do
   end
 
   test "POST /api/lists without authentication throws 401", %{conn: conn} do
+    payload = %{
+      list: %{
+        name: "Urgent Things"
+      }
+    }
     conn = conn
            |> with_invalid_auth_token_header
-           |> post("/api/lists")
+           |> post("/api/lists", payload)
     assert response(conn, 401) == "unauthorized"
   end
 

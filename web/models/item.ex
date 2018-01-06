@@ -5,6 +5,7 @@ defmodule Todo.Item do
 
   schema "item" do
     field :name, :string
+    field :finished_at, :utc_datetime
     belongs_to :list, Todo.List, references: :uuid
   end
 
