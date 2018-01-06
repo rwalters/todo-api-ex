@@ -10,6 +10,8 @@ defmodule Todo.Item do
     field :name, :string
     field :finished_at, :utc_datetime
     belongs_to :list, Todo.List
+
+    timestamps()
   end
 
   @doc """

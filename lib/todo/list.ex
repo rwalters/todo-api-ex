@@ -9,6 +9,8 @@ defmodule Todo.List do
   schema "lists" do
     field :name, :string
     has_many :items, Todo.Item
+
+    timestamps()
   end
 
   @doc """
