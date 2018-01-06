@@ -93,7 +93,7 @@ defmodule Todo.ItemControllerTest do
   end
 
   test "PUT /lists/:list_id/items/:id/finish with nonexistent item throws 404", %{conn: conn} do
-    list_id = Ecto.UUID.generate()
+    {:ok, %{id: list_id, name: "Grocery List"}=list} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
     id = Ecto.UUID.generate()
 
     conn = conn
@@ -122,5 +122,15 @@ defmodule Todo.ItemControllerTest do
            |> with_valid_auth_token_header
            |> delete("/api/lists/#{list_id}/items/#{id}")
     assert response(conn, 204) == ""
+  end
+
+  test "DELETE /lists/:list_id/items/:id/finish with nonexistent list throws 404", %{conn: conn} do
+    list_id = Ecto.UUID.generate()
+    id = Ecto.UUID.generate()
+
+    conn = conn
+           |> with_invalid_auth_token_header
+           |> delete("/api/lists/#{list_id}/items/#{id}")
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "Resource not found"}}
   end
 end
