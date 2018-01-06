@@ -1,9 +1,13 @@
 defmodule Todo.List do
   use Todo.Web, :schema
+  alias Todo.List
 
   schema "lists" do
     field :name, :string
     has_many :items, Todo.Item
+
+    field :username, :string, virtual: true
+    field :password, :string, virtual: true
 
     timestamps()
   end
@@ -11,8 +15,8 @@ defmodule Todo.List do
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
-  def changeset(struct, params \\ %{}) do
-    struct
+  def changeset(%List{} = user, params \\ %{}) do
+    user
     |> cast(params, [:name, :id])
     |> validate_required([:name])
   end
