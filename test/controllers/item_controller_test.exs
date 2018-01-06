@@ -136,7 +136,6 @@ defmodule Todo.ItemControllerTest do
 
   test "DELETE /lists/:list_id/items/:id/finish with nonexistent item throws 404", %{conn: conn} do
     {:ok, %{id: list_id, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
-    list_id = Ecto.UUID.generate()
     id = Ecto.UUID.generate()
 
     conn = conn

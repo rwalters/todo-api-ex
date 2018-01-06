@@ -68,6 +68,15 @@ defmodule Todo.ListControllerTest do
     assert Enum.map(items, &(&1["name"])) == ["Buy Milk", "Buy Onions"]
   end
 
+  test "GET /api/list/:id with nonexistent list throws 404", %{conn: conn} do
+    uuid = Ecto.UUID.generate()
+
+    conn = conn
+           |> with_valid_auth_token_header
+           |> get("/api/lists/#{uuid}")
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "Resource not found"}}
+  end
+
   test "PATCH /api/lists/:id without authentication throws 401", %{conn: conn} do
     {:ok, %{id: uuid, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
 
@@ -96,6 +105,21 @@ defmodule Todo.ListControllerTest do
            |> with_valid_auth_token_header
            |> patch("/api/lists/#{uuid}", payload)
     assert json_response(conn, 201) == "Shopping List updated"
+  end
+
+  test "PATCH /api/lists/:id with nonexistent list throws 422", %{conn: conn} do
+    uuid = Ecto.UUID.generate()
+
+    payload = %{
+      list: %{
+        name: "Shopping List"
+      }
+    }
+
+    conn = conn
+           |> with_valid_auth_token_header
+           |> patch("/api/lists/#{uuid}", payload)
+    assert json_response(conn, 422) == %{"errors" => %{"detail" => "Bad request"}}
   end
 
   test "DELETE /api/lists/:id without authentication throws 401", %{conn: conn} do
