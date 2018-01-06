@@ -3,9 +3,9 @@ defmodule Todo.Repo.Migrations.CreateItem do
 
   def change do
     create table(:item, primary_key: false) do
-      add :uuid, :uuid, primary_key: true
+      add :id, :uuid, primary_key: true
       add :name, :string
-      add :list_id, :uuid
+      add :list_id, references(:list, type: :uuid, on_delete: :delete_all)
     end
   end
 end

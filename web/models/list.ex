@@ -5,6 +5,7 @@ defmodule Todo.List do
 
   schema "list" do
     field :name, :string
+    has_many :items, Todo.Item, foreign_key: :list_id
   end
 
   @doc """
