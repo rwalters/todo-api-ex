@@ -17,7 +17,7 @@ defmodule Todo.Web do
   and import those modules here.
   """
 
-  def model do
+  def schema do
     quote do
       use Ecto.Schema
 
@@ -26,6 +26,7 @@ defmodule Todo.Web do
       import Ecto.Query
 
       @primary_key {:id, :binary_id, autogenerate: true}
+      @derive {Phoenix.Param, key: :id}
       @foreign_key_type :binary_id
     end
   end
