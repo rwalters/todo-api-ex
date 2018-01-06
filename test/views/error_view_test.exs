@@ -6,7 +6,7 @@ defmodule Todo.ErrorViewTest do
 
   test "renders 404.json" do
     assert render(Todo.ErrorView, "404.json", []) ==
-           %{errors: %{detail: "Page not found"}}
+           %{errors: %{detail: "Resource not found"}}
   end
 
   test "render 500.json" do

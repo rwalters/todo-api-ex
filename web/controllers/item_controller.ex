@@ -34,8 +34,8 @@ defmodule Todo.ItemController do
     else
       nil ->
         conn
-        |> put_status(422)
-        |> render(ErrorView, "422.json", %{errors: ["Failed to find record"]})
+        |> put_status(404)
+        |> render(ErrorView, "404.json", error: "Not found")
       {:error, %{errors: errors}} ->
         conn
         |> put_status(422)

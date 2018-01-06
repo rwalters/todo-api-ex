@@ -45,6 +45,20 @@ defmodule Todo.ItemControllerTest do
     assert src == "http://localhost:4000/lists/#{list_id}/items/#{id}"
   end
 
+  test "POST /lists/:list_id/items for nonexistent list throws 404", %{conn: conn} do
+    list_id = Ecto.UUID.generate()
+
+    payload = %{
+      item: %{
+        name: "Milk"
+      }
+    }
+    conn = conn
+           |> with_valid_auth_token_header
+           |> post("/api/lists/#{list_id}/items", payload)
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "Resource not found"}}
+  end
+
   test "PUT /lists/:list_id/items/:id/finish without authentication throws 401", %{conn: conn} do
     {:ok, %{id: list_id, name: "Grocery List"}=list} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
     changeset = Ecto.build_assoc(list, :items, name: "Milk")
@@ -66,6 +80,26 @@ defmodule Todo.ItemControllerTest do
            |> put("/api/lists/#{list_id}/items/#{id}/finish")
     %{"name" => "Milk", "id" => _id, "src" => _src, "finished_at" => finished_at} = json_response(conn, 201)
     assert finished_at != nil
+  end
+
+  test "PUT /lists/:list_id/items/:id/finish with nonexistent list throws 404", %{conn: conn} do
+    list_id = Ecto.UUID.generate()
+    id = Ecto.UUID.generate()
+
+    conn = conn
+           |> with_valid_auth_token_header
+           |> put("/api/lists/#{list_id}/items/#{id}/finish")
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "Resource not found"}}
+  end
+
+  test "PUT /lists/:list_id/items/:id/finish with nonexistent item throws 404", %{conn: conn} do
+    list_id = Ecto.UUID.generate()
+    id = Ecto.UUID.generate()
+
+    conn = conn
+           |> with_valid_auth_token_header
+           |> put("/api/lists/#{list_id}/items/#{id}/finish")
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "Resource not found"}}
   end
 
   test "DELETE /lists/:list_id/items/:id/finish without authentication throws 401", %{conn: conn} do
