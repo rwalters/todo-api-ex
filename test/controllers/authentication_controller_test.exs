@@ -2,6 +2,8 @@ defmodule Todo.AuthenticationControllerTest do
   use Todo.ConnCase
 
   def with_valid_authorization_header(conn) do
+    {:ok, _user} = Todo.Repo.insert(%Todo.User{encrypted_username_password: "dXNlcm5hbWU6cGFzc3dvcmQ="})
+
     conn
     |> put_req_header("authorization", "Basic dXNlcm5hbWU6cGFzc3dvcmQ=")
   end

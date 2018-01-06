@@ -6,7 +6,7 @@ defmodule Todo.Router do
   end
 
   pipeline :basic_auth do
-    plug BasicAuth, username: "username", password: "password"
+    plug BasicAuth
   end
 
   pipeline :token_auth do
