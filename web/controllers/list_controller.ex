@@ -1,7 +1,6 @@
 defmodule Todo.ListController do
   use Todo.Web, :controller
 
-  alias Todo.{Repo, List}
   alias Todo.{ErrorView, Repo, List}
 
   def index(conn, _params) do
@@ -17,7 +16,7 @@ defmodule Todo.ListController do
       nil ->
         conn
         |> put_status(404)
-        |> render(ErrorView, "404.json", error: "Not found")
+        |> render(ErrorView, "404.json", %{error: "List not found"})
     end
   end
 
@@ -47,7 +46,7 @@ defmodule Todo.ListController do
       nil ->
         conn
         |> put_status(422)
-        |> render(ErrorView, "422.json", %{errors: ["Failed to find record"]})
+        |> render(ErrorView, "422.json", %{errors: ["List not found"]})
       {:error, %{errors: errors}} ->
         conn
         |> put_status(422)
@@ -65,7 +64,7 @@ defmodule Todo.ListController do
       nil ->
         conn
         |> put_status(404)
-        |> render(ErrorView, "404.json", error: "Not found")
+        |> render(ErrorView, "404.json", %{error: "List not found"})
     end
   end
 end

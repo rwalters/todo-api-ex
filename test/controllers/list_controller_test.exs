@@ -74,7 +74,7 @@ defmodule Todo.ListControllerTest do
     conn = conn
            |> with_valid_auth_token_header
            |> get("/api/lists/#{uuid}")
-    assert json_response(conn, 404) == %{"errors" => %{"detail" => "Resource not found"}}
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "List not found"}}
   end
 
   test "PATCH /api/lists/:id without authentication throws 401", %{conn: conn} do

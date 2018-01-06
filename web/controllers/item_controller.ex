@@ -1,7 +1,6 @@
 defmodule Todo.ItemController do
   use Todo.Web, :controller
 
-  alias Todo.{Repo, List, Item}
   alias Todo.{ErrorView, Repo, List, Item}
 
   def create(conn, %{"list_id" => list_id, "item" => %{"name" => name}}) do
@@ -16,7 +15,7 @@ defmodule Todo.ItemController do
       nil ->
         conn
         |> put_status(404)
-        |> render(ErrorView, "404.json", error: "Not found")
+        |> render(ErrorView, "404.json", %{error: "Resource not found"})
       {:error, %{errors: errors}} ->
         conn
         |> put_status(422)
@@ -35,7 +34,7 @@ defmodule Todo.ItemController do
       nil ->
         conn
         |> put_status(404)
-        |> render(ErrorView, "404.json", error: "Not found")
+        |> render(ErrorView, "404.json", %{error: "Resource not found"})
       {:error, %{errors: errors}} ->
         conn
         |> put_status(422)
@@ -53,7 +52,7 @@ defmodule Todo.ItemController do
       nil ->
         conn
         |> put_status(404)
-        |> render(ErrorView, "404.json", error: "Not found")
+        |> render(ErrorView, "404.json", %{error: "Resource not found"})
     end
   end
 end

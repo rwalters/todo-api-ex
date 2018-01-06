@@ -41,7 +41,10 @@ SET default_with_oids = false;
 CREATE TABLE items (
     id uuid NOT NULL,
     name character varying(255),
-    list_id uuid
+    list_id uuid,
+    finished_at timestamp without time zone,
+    inserted_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -52,7 +55,8 @@ CREATE TABLE items (
 CREATE TABLE lists (
     id uuid NOT NULL,
     name character varying(255),
-    finished_at timestamp without time zone
+    inserted_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -63,6 +67,18 @@ CREATE TABLE lists (
 CREATE TABLE schema_migrations (
     version bigint NOT NULL,
     inserted_at timestamp without time zone
+);
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE users (
+    id uuid NOT NULL,
+    encrypted_username_password character varying(255),
+    inserted_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -91,6 +107,14 @@ ALTER TABLE ONLY schema_migrations
 
 
 --
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: items items_list_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -102,5 +126,5 @@ ALTER TABLE ONLY items
 -- PostgreSQL database dump complete
 --
 
-INSERT INTO "schema_migrations" (version) VALUES (20180105033357), (20180105234554);
+INSERT INTO "schema_migrations" (version) VALUES (20180105033357), (20180105234554), (20180106223226);
 

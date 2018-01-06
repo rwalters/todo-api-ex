@@ -1,11 +1,11 @@
 defmodule Todo.User do
+  use Todo.Web, :schema
   alias Todo.User
 
-  use Todo.Web, :schema
-
   schema "users" do
-    field :encrypted_password, :string
-    field :username, :string
+    field :encrypted_username_password, :string
+    field :username, :string, virtual: true
+    field :password, :string, virtual: true
 
     timestamps()
   end
@@ -13,7 +13,19 @@ defmodule Todo.User do
   @doc false
   def changeset(%User{} = user, attrs) do
     user
-    |> cast(attrs, [:username, :encrypted_password])
-    |> validate_required([:username, :encrypted_password])
+    |> cast(attrs, [:username, :password])
+    |> validate_required([:username, :password])
+    |> validate_length(:password, min: 8)
+    |> encrypt_username_and_password()
   end
+
+  def encrypt_username_and_password(%Ecto.Changeset{valid?: true, changes: %{username: username, password: password}} = changeset) do
+    put_change(
+      changeset,
+      :encrypted_username_password,
+      encode(username, password)
+    )
+  end
+
+  def encode(username, password), do: Base.encode64(username <> ":" <> password)
 end
