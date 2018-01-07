@@ -1,5 +1,6 @@
 defmodule Todo.User do
   use Todo.Web, :schema
+
   alias Todo.User
 
   schema "users" do
@@ -11,7 +12,7 @@ defmodule Todo.User do
   end
 
   @doc false
-  def changeset(%User{} = user, attrs) do
+  def changeset(%User{} = user, attrs \\ %{}) do
     user
     |> cast(attrs, [:username, :password])
     |> validate_required([:username, :password])

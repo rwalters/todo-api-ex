@@ -13,11 +13,11 @@ defmodule Todo.List do
   end
 
   @doc """
-  Builds a changeset based on the `struct` and `params`.
+  Builds a changeset based on the `struct` and `attrs`.
   """
-  def changeset(%List{} = user, params \\ %{}) do
-    user
-    |> cast(params, [:name, :id])
+  def changeset(%List{} = list, attrs \\ %{}) do
+    list
+    |> cast(attrs, [:name, :id])
     |> validate_required([:name])
   end
 end

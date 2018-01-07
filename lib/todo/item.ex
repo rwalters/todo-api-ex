@@ -1,6 +1,8 @@
 defmodule Todo.Item do
   use Todo.Web, :schema
 
+  alias Todo.Item
+
   schema "items" do
     field :name, :string
     field :finished_at, :utc_datetime
@@ -12,9 +14,9 @@ defmodule Todo.Item do
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
-  def changeset(struct, params \\ %{}) do
-    struct
-    |> cast(params, [:name, :id, :finished_at])
+  def changeset(%Item{} = item, attrs \\ %{}) do
+    item
+    |> cast(attrs, [:name, :id, :finished_at])
     |> validate_required([:name])
   end
 end
