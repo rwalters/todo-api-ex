@@ -131,7 +131,7 @@ defmodule Todo.ListControllerTest do
     assert json_response(conn, 422) == %{"errors" => %{"detail" => "Bad request"}}
   end
 
-  test "PATCH /api/lists/:id with malformed list throws 400", %{conn: conn} do
+  test "PATCH /api/lists/:id with malformed list id throws 400", %{conn: conn} do
     uuid = "1234"
 
     payload = %{
