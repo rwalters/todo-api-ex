@@ -8,8 +8,10 @@ defmodule BasicAuth do
   def call(conn, _opts) do
     case get_req_header(conn, "authorization") do
       ["Basic " <> auth] ->
-        with %Todo.User{} <- Todo.Repo.get_by(Todo.User, encrypted_username_password: auth) do
+        with user = %Todo.User{} <- Todo.Repo.get_by(Todo.User, encrypted_username_password: auth) do
           conn
+          |> put_session(:user_id, user.id)
+          |> assign(:current_user, user)
         else
           nil ->
             unauthorized(conn)
