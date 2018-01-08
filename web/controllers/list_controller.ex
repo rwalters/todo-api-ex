@@ -14,14 +14,8 @@ defmodule Todo.ListController do
                 |> Repo.preload(:items) do
       render(conn, "show.json", list: list)
     else
-      :error ->
-        conn
-        |> put_status(400)
-        |> render(ErrorView, "400.json", %{error: "Bad request"})
-      nil ->
-        conn
-        |> put_status(404)
-        |> render(ErrorView, "404.json", %{error: "List not found"})
+      :error -> malformed_request(conn)
+      nil -> not_found(conn)
     end
   end
 
@@ -33,10 +27,7 @@ defmodule Todo.ListController do
       |> put_status(201)
       |> render("create.json", list: list)
     else
-      {:error, %{errors: errors}} ->
-        conn
-        |> put_status(422)
-        |> render(ErrorView, "422.json", %{errors: errors})
+      {:error, %{errors: errors}} -> errors(conn, errors)
     end
   end
 
@@ -49,18 +40,9 @@ defmodule Todo.ListController do
         |> put_status(201)
         |> render("update.json", list: updated)
     else
-      nil ->
-        conn
-        |> put_status(422)
-        |> render(ErrorView, "422.json", %{errors: ["List not found"]})
-      :error ->
-        conn
-        |> put_status(400)
-        |> render(ErrorView, "400.json", %{error: "Bad request"})
-      {:error, %{errors: errors}} ->
-        conn
-        |> put_status(422)
-        |> render(ErrorView, "422.json", %{errors: errors})
+      nil -> errors(conn, ["List not found"])
+      :error -> malformed_request(conn)
+      {:error, %{errors: errors}} -> errors(conn, errors)
     end
   end
 
@@ -72,14 +54,26 @@ defmodule Todo.ListController do
       |> put_status(204)
       |> send_resp(:no_content, "")
     else
-      :error ->
-        conn
-        |> put_status(400)
-        |> render(ErrorView, "400.json", %{error: "Bad request"})
-      nil ->
-        conn
-        |> put_status(404)
-        |> render(ErrorView, "404.json", %{error: "List not found"})
+      :error -> malformed_request(conn)
+      nil -> not_found(conn)
     end
+  end
+
+  defp malformed_request(conn) do
+    conn
+    |> put_status(400)
+    |> render(ErrorView, "400.json", %{error: "Bad request"})
+  end
+
+  defp not_found(conn) do
+    conn
+    |> put_status(404)
+    |> render(ErrorView, "404.json", %{error: "List not found"})
+  end
+
+  defp errors(conn, errors) do
+    conn
+    |> put_status(422)
+    |> render(ErrorView, "422.json", %{errors: errors})
   end
 end
