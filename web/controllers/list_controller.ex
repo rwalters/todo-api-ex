@@ -36,11 +36,11 @@ defmodule Todo.ListController do
     with user <- current_user(conn),
          {:ok, uuid} <- Ecto.UUID.cast(uuid),
          list = %List{} <- assoc(user, :lists) |> Repo.get(uuid),
-      changeset = List.changeset(list, params),
-      {:ok, updated} <- Repo.update(changeset) do
-        conn
-        |> put_status(201)
-        |> render("update.json", list: updated)
+         changeset <- List.changeset(list, params),
+         {:ok, updated} <- Repo.update(changeset) do
+      conn
+      |> put_status(201)
+      |> render("update.json", list: updated)
     else
       nil -> errors(conn, ["List not found"])
       :error -> malformed_request(conn)
