@@ -65,12 +65,17 @@ defmodule Todo.ListController do
   end
 
   def delete(conn, %{"id" => uuid}) do
-    with list = %List{} <- Repo.get(List, uuid) do
+    with {:ok, uuid} <- Ecto.UUID.cast(uuid),
+         list = %List{} <- Repo.get(List, uuid) do
       Repo.delete!(list)
       conn
       |> put_status(204)
       |> send_resp(:no_content, "")
     else
+      :error ->
+        conn
+        |> put_status(400)
+        |> render(ErrorView, "400.json", %{error: "Bad request"})
       nil ->
         conn
         |> put_status(404)

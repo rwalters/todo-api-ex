@@ -77,6 +77,15 @@ defmodule Todo.ListControllerTest do
     assert json_response(conn, 404) == %{"errors" => %{"detail" => "List not found"}}
   end
 
+  test "GET /api/list/:id with malformed list id throws 400", %{conn: conn} do
+    uuid = "1234"
+
+    conn = conn
+           |> with_valid_auth_token_header
+           |> get("/api/lists/#{uuid}")
+    assert json_response(conn, 400) == %{"errors" => %{"detail" => "Bad request"}}
+  end
+
   test "PATCH /api/lists/:id without authentication throws 401", %{conn: conn} do
     {:ok, %{id: uuid, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
 
@@ -122,6 +131,21 @@ defmodule Todo.ListControllerTest do
     assert json_response(conn, 422) == %{"errors" => %{"detail" => "Bad request"}}
   end
 
+  test "PATCH /api/lists/:id with malformed list throws 400", %{conn: conn} do
+    uuid = "1234"
+
+    payload = %{
+      list: %{
+        name: "Shopping List"
+      }
+    }
+
+    conn = conn
+           |> with_valid_auth_token_header
+           |> patch("/api/lists/#{uuid}", payload)
+    assert json_response(conn, 400) == %{"errors" => %{"detail" => "Bad request"}}
+  end
+
   test "DELETE /api/lists/:id without authentication throws 401", %{conn: conn} do
     {:ok, %{id: uuid, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
 
@@ -138,6 +162,24 @@ defmodule Todo.ListControllerTest do
            |> with_valid_auth_token_header
            |> delete("/api/lists/#{uuid}")
     assert response(conn, 204) == ""
+  end
+
+  test "DELETE /api/lists/:id with nonexistent list throws 404", %{conn: conn} do
+    uuid = Ecto.UUID.generate()
+
+    conn = conn
+           |> with_valid_auth_token_header
+           |> delete("/api/lists/#{uuid}")
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "List not found"}}
+  end
+
+  test "DELETE /api/lists/:id with malformed list id throws 400", %{conn: conn} do
+    uuid = "1234"
+
+    conn = conn
+           |> with_valid_auth_token_header
+           |> delete("/api/lists/#{uuid}")
+    assert json_response(conn, 400) == %{"errors" => %{"detail" => "Bad request"}}
   end
 
   test "POST /api/lists without authentication throws 401", %{conn: conn} do
