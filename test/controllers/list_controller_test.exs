@@ -51,6 +51,30 @@ defmodule Todo.ListControllerTest do
     ]}
   end
 
+  test "POST /api/lists without authentication throws 401", %{conn: conn} do
+    payload = %{
+      list: %{
+        name: "Urgent Things"
+      }
+    }
+    conn = conn
+           |> with_invalid_auth_token_header
+           |> post("/api/lists", payload)
+    assert response(conn, 401) == "unauthorized"
+  end
+
+  test "POST /api/lists with authentication creates list", %{conn: conn} do
+    payload = %{
+      list: %{
+        name: "Urgent Things"
+      }
+    }
+    conn = conn
+           |> with_valid_auth_token_header
+           |> post("/api/lists", payload)
+    assert %{"name" => "Urgent Things", "id" => _, "src" => _} = json_response(conn, 201)
+  end
+
   test "GET /api/list/:id without authentication throws 401", %{conn: conn} do
     list = create_user() |> create_list(name: "Shopping")
 
@@ -126,7 +150,7 @@ defmodule Todo.ListControllerTest do
   end
 
   test "PATCH /api/lists/:id with authentication updates list", %{conn: conn} do
-    {:ok, %{id: uuid, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
+    list = (user = create_user()) |> create_list(name: "Shopping")
 
     payload = %{
       list: %{
@@ -135,9 +159,25 @@ defmodule Todo.ListControllerTest do
     }
 
     conn = conn
-           |> with_valid_auth_token_header
-           |> patch("/api/lists/#{uuid}", payload)
+           |> with_valid_auth_token_header(user)
+           |> patch("/api/lists/#{list.id}", payload)
     assert json_response(conn, 201) == "Shopping List updated"
+  end
+
+  test "PATCH /api/lists/:id returns 422 for someone else's list", %{conn: conn} do
+    list = (_user = create_user()) |> create_list(name: "Shopping")
+    different_user = create_user()
+
+    payload = %{
+      list: %{
+        name: "Shopping List"
+      }
+    }
+
+    conn = conn
+           |> with_valid_auth_token_header(different_user)
+           |> patch("/api/lists/#{list.id}", payload)
+    assert json_response(conn, 422) == %{"errors" => %{"detail" => "Bad request"}}
   end
 
   test "PATCH /api/lists/:id with nonexistent list throws 422", %{conn: conn} do
@@ -179,13 +219,23 @@ defmodule Todo.ListControllerTest do
     assert response(conn, 401) == "unauthorized"
   end
 
-  test "DELETE /api/lists/:id with authentication updates list", %{conn: conn} do
-    {:ok, %{id: uuid, name: "Grocery List"}} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
+  test "DELETE /api/lists/:id with authentication deletes list", %{conn: conn} do
+    list = (user = create_user()) |> create_list(name: "Shopping")
 
     conn = conn
-           |> with_valid_auth_token_header
-           |> delete("/api/lists/#{uuid}")
+           |> with_valid_auth_token_header(user)
+           |> delete("/api/lists/#{list.id}")
     assert response(conn, 204) == ""
+  end
+
+  test "DELETE /api/lists/:id returns 404 for someone else's list", %{conn: conn} do
+    list = (_user = create_user()) |> create_list(name: "Shopping")
+    different_user = create_user()
+
+    conn = conn
+           |> with_valid_auth_token_header(different_user)
+           |> delete("/api/lists/#{list.id}")
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "List not found"}}
   end
 
   test "DELETE /api/lists/:id with nonexistent list throws 404", %{conn: conn} do
@@ -204,29 +254,5 @@ defmodule Todo.ListControllerTest do
            |> with_valid_auth_token_header
            |> delete("/api/lists/#{uuid}")
     assert json_response(conn, 400) == %{"errors" => %{"detail" => "Bad request"}}
-  end
-
-  test "POST /api/lists without authentication throws 401", %{conn: conn} do
-    payload = %{
-      list: %{
-        name: "Urgent Things"
-      }
-    }
-    conn = conn
-           |> with_invalid_auth_token_header
-           |> post("/api/lists", payload)
-    assert response(conn, 401) == "unauthorized"
-  end
-
-  test "POST /api/lists with authentication creates list", %{conn: conn} do
-    payload = %{
-      list: %{
-        name: "Urgent Things"
-      }
-    }
-    conn = conn
-           |> with_valid_auth_token_header
-           |> post("/api/lists", payload)
-    assert %{"name" => "Urgent Things", "id" => _, "src" => _} = json_response(conn, 201)
   end
 end

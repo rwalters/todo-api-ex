@@ -21,8 +21,7 @@ defmodule Todo.ListController do
   end
 
   def create(conn, %{"list" => %{"name" => name}}) do
-    with user_id <- Plug.Conn.get_session(conn, :user_id),
-         user <- Repo.get(User, user_id),
+    with user <- current_user(conn),
          changeset = Ecto.build_assoc(user, :lists, name: name),
          {:ok, list} <- Repo.insert(changeset) do
       conn
@@ -34,8 +33,9 @@ defmodule Todo.ListController do
   end
 
   def update(conn, %{"id" => uuid, "list" => params}) do
-    with {:ok, uuid} <- Ecto.UUID.cast(uuid),
-         list = %List{} <- Repo.get(List, uuid),
+    with user <- current_user(conn),
+         {:ok, uuid} <- Ecto.UUID.cast(uuid),
+         list = %List{} <- assoc(user, :lists) |> Repo.get(uuid),
       changeset = List.changeset(list, params),
       {:ok, updated} <- Repo.update(changeset) do
         conn
@@ -49,8 +49,9 @@ defmodule Todo.ListController do
   end
 
   def delete(conn, %{"id" => uuid}) do
-    with {:ok, uuid} <- Ecto.UUID.cast(uuid),
-         list = %List{} <- Repo.get(List, uuid) do
+    with user <- current_user(conn),
+         {:ok, uuid} <- Ecto.UUID.cast(uuid),
+         list = %List{} <- assoc(user, :lists) |> Repo.get(uuid) do
       Repo.delete!(list)
       conn
       |> put_status(204)
