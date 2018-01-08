@@ -7,6 +7,7 @@ defmodule Todo.User do
     field :encrypted_username_password, :string
     field :username, :string, virtual: true
     field :password, :string, virtual: true
+    has_many :lists, Todo.List
 
     timestamps()
   end

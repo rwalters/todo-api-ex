@@ -9,6 +9,8 @@ defmodule Todo.List do
     field :username, :string, virtual: true
     field :password, :string, virtual: true
 
+    belongs_to :user, Todo.User
+
     timestamps()
   end
 
