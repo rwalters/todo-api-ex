@@ -9,10 +9,15 @@ defmodule Todo.ListController do
   end
 
   def show(conn, %{"id" => uuid}) do
-    with list = %List{} <- Repo.get(List, uuid)
+    with {:ok, uuid} <- Ecto.UUID.cast(uuid),
+         list = %List{} <- Repo.get(List, uuid)
                 |> Repo.preload(:items) do
       render(conn, "show.json", list: list)
     else
+      :error ->
+        conn
+        |> put_status(400)
+        |> render(ErrorView, "400.json", %{error: "Bad request"})
       nil ->
         conn
         |> put_status(404)
@@ -36,7 +41,8 @@ defmodule Todo.ListController do
   end
 
   def update(conn, %{"id" => uuid, "list" => params}) do
-    with list = %List{} <- Repo.get(List, uuid),
+    with {:ok, uuid} <- Ecto.UUID.cast(uuid),
+         list = %List{} <- Repo.get(List, uuid),
       changeset = List.changeset(list, params),
       {:ok, updated} <- Repo.update(changeset) do
         conn
@@ -47,6 +53,10 @@ defmodule Todo.ListController do
         conn
         |> put_status(422)
         |> render(ErrorView, "422.json", %{errors: ["List not found"]})
+      :error ->
+        conn
+        |> put_status(400)
+        |> render(ErrorView, "400.json", %{error: "Bad request"})
       {:error, %{errors: errors}} ->
         conn
         |> put_status(422)

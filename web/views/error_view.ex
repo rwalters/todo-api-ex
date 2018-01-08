@@ -9,6 +9,10 @@ defmodule Todo.ErrorView do
     %{errors: %{detail: "Internal server error"}}
   end
 
+  def render("400.json", %{error: message}) do
+    %{errors: %{detail: message}}
+  end
+
   def render("422.json", _assigns) do
     %{errors: %{detail: "Bad request"}}
   end
