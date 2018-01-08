@@ -164,7 +164,7 @@ defmodule Todo.ListControllerTest do
     assert json_response(conn, 201) == "Shopping List updated"
   end
 
-  test "PATCH /api/lists/:id returns 422 for someone else's list", %{conn: conn} do
+  test "PATCH /api/lists/:id returns 404 for someone else's list", %{conn: conn} do
     list = (_user = create_user()) |> create_list(name: "Shopping")
     different_user = create_user()
 
@@ -177,10 +177,10 @@ defmodule Todo.ListControllerTest do
     conn = conn
            |> with_valid_auth_token_header(different_user)
            |> patch("/api/lists/#{list.id}", payload)
-    assert json_response(conn, 422) == %{"errors" => %{"detail" => "Bad request"}}
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "List not found"}}
   end
 
-  test "PATCH /api/lists/:id with nonexistent list throws 422", %{conn: conn} do
+  test "PATCH /api/lists/:id with nonexistent list throws 404", %{conn: conn} do
     uuid = Ecto.UUID.generate()
 
     payload = %{
@@ -192,7 +192,7 @@ defmodule Todo.ListControllerTest do
     conn = conn
            |> with_valid_auth_token_header
            |> patch("/api/lists/#{uuid}", payload)
-    assert json_response(conn, 422) == %{"errors" => %{"detail" => "Bad request"}}
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "List not found"}}
   end
 
   test "PATCH /api/lists/:id with malformed list id throws 400", %{conn: conn} do

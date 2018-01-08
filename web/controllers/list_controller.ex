@@ -42,7 +42,7 @@ defmodule Todo.ListController do
       |> put_status(201)
       |> render("update.json", list: updated)
     else
-      nil -> errors(conn, ["List not found"])
+      nil -> not_found(conn)
       :error -> malformed_request(conn)
       {:error, %{errors: errors}} -> errors(conn, errors)
     end
