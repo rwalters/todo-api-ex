@@ -3,10 +3,13 @@ defmodule Todo.ListControllerTest do
   require Exredis.Api
 
   def with_valid_auth_token_header(conn) do
+    {:ok, user} = Todo.Repo.insert(%Todo.User{encrypted_username_password: "dXNlcm5hbWU6cGFzc3dvcmQ="})
+
     {:ok, client} = Exredis.start_link
-    client |> Exredis.Api.setex("abcdef", 1, true)
+    client |> Exredis.Api.setex("abcdef", 1, user.id)
 
     conn
+    |> assign(:user_id, user.id)
     |> put_req_header("authorization", "Token token=\"abcdef\"")
   end
 

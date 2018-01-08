@@ -9,8 +9,9 @@ defmodule TokenAuth do
   def call(conn, _opts) do
     case get_req_header(conn, "authorization") do
       ["Token token=" <> token] ->
-        if find_token(token) do
+        if user_id = find_token(token) do
           conn
+          |> Plug.Conn.put_session(:user_id, user_id)
         else
           unauthorized(conn)
         end
@@ -28,14 +29,11 @@ defmodule TokenAuth do
   defp find_token(token) do
     token = String.replace(token, ~r/"/, "")
     {:ok, client} = Exredis.start_link
+    user_id = Exredis.Api.get(client ,token)
 
-    client
-    |> Exredis.Api.get(token)
-    |> case do
-      :undefined ->
-        false
-      _ ->
-        true
+    case user_id do
+      :undefined -> false
+      _ -> user_id
     end
   end
 end

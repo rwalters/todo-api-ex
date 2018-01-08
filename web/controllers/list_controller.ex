@@ -1,7 +1,7 @@
 defmodule Todo.ListController do
   use Todo.Web, :controller
 
-  alias Todo.{ErrorView, Repo, List}
+  alias Todo.{ErrorView, Repo, List, User}
 
   def index(conn, _params) do
     lists = Repo.all(List)
@@ -19,10 +19,11 @@ defmodule Todo.ListController do
     end
   end
 
-  def create(conn, %{"list" => params}) do
-    changeset = List.changeset(%List{}, params)
-
-    with {:ok, list} <- Repo.insert(changeset) do
+  def create(conn, %{"list" => %{"name" => name}}) do
+    with user_id <- Plug.Conn.get_session(conn, :user_id),
+         user <- Repo.get(User, user_id),
+         changeset = Ecto.build_assoc(user, :lists, name: name),
+         {:ok, list} <- Repo.insert(changeset) do
       conn
       |> put_status(201)
       |> render("create.json", list: list)

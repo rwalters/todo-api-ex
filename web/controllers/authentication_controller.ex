@@ -6,8 +6,8 @@ defmodule Todo.AuthenticationController do
   use Timex
 
   def authenticate(conn, _params) do
-    user_id = Plug.Conn.get_session(conn, :user_id)
-    render(conn, "authenticate.json", %{token: generate_and_cache_token(user_id), expires_at: expires_at()})
+    user = Todo.UserSession.current_user(conn)
+    render(conn, "authenticate.json", %{token: generate_and_cache_token(user.id), expires_at: expires_at()})
   end
 
   defp expires_at do
