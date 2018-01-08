@@ -41,6 +41,7 @@ defmodule Todo.Mixfile do
       {:cowboy, "~> 1.0"},
       {:timex, "~> 3.1"},
       {:exredis, ">= 0.2.4"},
+      {:logger_file_backend, "~> 0.0.10"},
     ]
   end
 

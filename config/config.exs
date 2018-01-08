@@ -17,10 +17,13 @@ config :todo, Todo.Endpoint,
   pubsub: [name: Todo.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
-# Configures Elixir's Logger
-config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+config :logger,
+  backends: [:console, {LoggerFileBackend, :error_log}],
+  format: "[$level] $message\n"
+
+config :logger, :error_log,
+  path: "/tmp/info.log",
+  level: :debug
 
 config :exredis,
   host: "127.0.0.1",

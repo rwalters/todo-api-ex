@@ -6,7 +6,7 @@ defmodule Todo.AuthenticationController do
   use Timex
 
   def authenticate(conn, _params) do
-    render(conn, "authenticate.json", %{token: token(), expires_at: expires_at()})
+    render(conn, "authenticate.json", %{token: generate_and_cache_token(), expires_at: expires_at()})
   end
 
   defp expires_at do
@@ -19,7 +19,7 @@ defmodule Todo.AuthenticationController do
     end
   end
 
-  defp token do
+  defp generate_and_cache_token do
     token = Ecto.UUID.generate()
 
     {:ok, client} = Exredis.start_link
