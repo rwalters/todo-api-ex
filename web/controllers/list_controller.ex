@@ -4,13 +4,14 @@ defmodule Todo.ListController do
   alias Todo.{ErrorView, Repo, List, User}
 
   def index(conn, _params) do
-    lists = Repo.all(List)
-    render(conn, "index.json", lists: lists)
+    user = current_user(conn)
+    render(conn, "index.json", lists: user.lists)
   end
 
   def show(conn, %{"id" => uuid}) do
+    user = current_user(conn)
     with {:ok, uuid} <- Ecto.UUID.cast(uuid),
-         list = %List{} <- Repo.get(List, uuid)
+         list = %List{} <- assoc(user, :lists) |> Repo.get(uuid)
                 |> Repo.preload(:items) do
       render(conn, "show.json", list: list)
     else
@@ -58,6 +59,11 @@ defmodule Todo.ListController do
       :error -> malformed_request(conn)
       nil -> not_found(conn)
     end
+  end
+
+  defp current_user(conn) do
+    user_id = Plug.Conn.get_session(conn, :user_id)
+    Repo.get(User, user_id) |> Repo.preload(:lists)
   end
 
   defp malformed_request(conn) do

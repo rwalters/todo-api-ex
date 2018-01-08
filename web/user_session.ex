@@ -18,7 +18,7 @@ defmodule Todo.UserSession do
   defp load_current_user(conn) do
     id = Plug.Conn.get_session(conn, :user_id)
     if id do
-      user = Todo.Repo.get!(App.User, id)
+      user = Todo.Repo.get!(Todo.User, id)
       login_user(conn, user)
     end
   end

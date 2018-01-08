@@ -2,20 +2,28 @@ defmodule Todo.ListControllerTest do
   use Todo.ConnCase
   require Exredis.Api
 
-  def with_valid_auth_token_header(conn) do
-    {:ok, user} = Todo.Repo.insert(%Todo.User{encrypted_username_password: "dXNlcm5hbWU6cGFzc3dvcmQ="})
-
+  def with_valid_auth_token_header(conn), do: with_valid_auth_token_header(conn, create_user())
+  def with_valid_auth_token_header(conn, user) do
+    token = Ecto.UUID.generate()
     {:ok, client} = Exredis.start_link
-    client |> Exredis.Api.setex("abcdef", 1, user.id)
+    client |> Exredis.Api.setex(token, 1, user.id)
 
     conn
     |> assign(:user_id, user.id)
-    |> put_req_header("authorization", "Token token=\"abcdef\"")
+    |> put_req_header("authorization", "Token token=\"#{token}\"")
   end
 
   def with_invalid_auth_token_header(conn) do
     conn
-    |> put_req_header("authorization", "Token token=\"zyxwvut\"")
+    |> put_req_header("authorization", "Token token=\"#{Ecto.UUID.generate()}\"")
+  end
+
+  def create_user(username \\ "username", password \\ "password") do
+    with {:ok, user} <- Todo.Repo.insert(%Todo.User{encrypted_username_password: Todo.User.encode(username, password)}), do: user
+  end
+
+  def create_list(user, name: name) do
+    with {:ok, list} = Ecto.build_assoc(user, :lists, name: name) |> Todo.Repo.insert(), do: list
   end
 
   test "GET /api/lists without authentication throws 401", %{conn: conn} do
@@ -25,12 +33,17 @@ defmodule Todo.ListControllerTest do
     assert response(conn, 401) == "unauthorized"
   end
 
-  test "GET /api/lists with authentication returns lists", %{conn: conn} do
-    {:ok, list_1} = Todo.Repo.insert(%Todo.List{name: "Shopping"})
-    {:ok, list_2} = Todo.Repo.insert(%Todo.List{name: "Groceries"})
+  test "GET /api/lists with authentication returns lists for current user", %{conn: conn} do
+    user = create_user()
+    list_1 = create_list(user, name: "Shopping")
+    list_2 = create_list(user, name: "Groceries")
+
+    different_user = create_user()
+    _list_3 = create_list(different_user, name: "Movies")
+    _list_4 = create_list(different_user, name: "TV Shows")
 
     conn = conn
-           |> with_valid_auth_token_header
+           |> with_valid_auth_token_header(user)
            |> get("/api/lists")
     assert json_response(conn, 200) == %{"lists" => [
       %{"id" => list_1.id, "name" => list_1.name, "src" => "http://localhost:4000/lists/#{list_1.id}"},
@@ -39,36 +52,44 @@ defmodule Todo.ListControllerTest do
   end
 
   test "GET /api/list/:id without authentication throws 401", %{conn: conn} do
-    {:ok, %{id: uuid, name: "Urgent Things"}} = Todo.Repo.insert(%Todo.List{name: "Urgent Things"})
+    list = create_user() |> create_list(name: "Shopping")
 
     conn = conn
            |> with_invalid_auth_token_header
-           |> get("/api/lists/#{uuid}")
+           |> get("/api/lists/#{list.id}")
     assert response(conn, 401) == "unauthorized"
   end
 
   test "GET /api/list/:id with authentication returns list", %{conn: conn} do
-    {:ok, %{id: uuid, name: "Urgent Things"}} = Todo.Repo.insert(%Todo.List{name: "Urgent Things"})
+    list = (user = create_user()) |> create_list(name: "Shopping")
 
     conn = conn
-           |> with_valid_auth_token_header
-           |> get("/api/lists/#{uuid}")
-    %{"name" => "Urgent Things", "id" => id, "src" => _src, "items" => _items} = json_response(conn, 200)
-    assert uuid == id
+           |> with_valid_auth_token_header(user)
+           |> get("/api/lists/#{list.id}")
+    %{"name" => "Shopping", "id" => id, "src" => _src, "items" => _items} = json_response(conn, 200)
+    assert list.id == id
   end
 
   test "GET /api/list/:id with authentication returns list with items", %{conn: conn} do
-    {:ok, %{id: uuid, name: "Urgent Things"}=list} = Todo.Repo.insert(%Todo.List{name: "Urgent Things"})
-    changeset = Ecto.build_assoc(list, :items, name: "Buy Milk")
-    Repo.insert(changeset)
-    changeset = Ecto.build_assoc(list, :items, name: "Buy Onions")
-    Repo.insert(changeset)
+    list = (user = create_user()) |> create_list(name: "Shopping")
+    Ecto.build_assoc(list, :items, name: "Buy Milk") |> Repo.insert
+    Ecto.build_assoc(list, :items, name: "Buy Onions") |> Repo.insert
 
     conn = conn
-           |> with_valid_auth_token_header
-           |> get("/api/lists/#{uuid}")
-    %{"name" => "Urgent Things", "id" => _id, "src" => _src, "items" => items} = json_response(conn, 200)
+           |> with_valid_auth_token_header(user)
+           |> get("/api/lists/#{list.id}")
+    %{"name" => "Shopping", "id" => _id, "src" => _src, "items" => items} = json_response(conn, 200)
     assert Enum.map(items, &(&1["name"])) == ["Buy Milk", "Buy Onions"]
+  end
+
+  test "GET /api/list/:id returns 404 for list that doesn't belong to user", %{conn: conn} do
+    list = (_user = create_user()) |> create_list(name: "Shopping")
+    different_user = create_user()
+
+    conn = conn
+           |> with_valid_auth_token_header(different_user)
+           |> get("/api/lists/#{list.id}")
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "List not found"}}
   end
 
   test "GET /api/list/:id with nonexistent list throws 404", %{conn: conn} do
