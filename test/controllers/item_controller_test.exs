@@ -56,7 +56,7 @@ defmodule Todo.ItemControllerTest do
     conn = conn
            |> with_valid_auth_token_header
            |> post("/api/lists/#{list_id}/items", payload)
-    assert json_response(conn, 404) == %{"errors" => %{"detail" => "Resource not found"}}
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "Item not found"}}
   end
 
   test "PUT /lists/:list_id/items/:id/finish without authentication throws 401", %{conn: conn} do
@@ -89,7 +89,7 @@ defmodule Todo.ItemControllerTest do
     conn = conn
            |> with_valid_auth_token_header
            |> put("/api/lists/#{list_id}/items/#{id}/finish")
-    assert json_response(conn, 404) == %{"errors" => %{"detail" => "Resource not found"}}
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "Item not found"}}
   end
 
   test "PUT /lists/:list_id/items/:id/finish with nonexistent item throws 404", %{conn: conn} do
@@ -99,7 +99,7 @@ defmodule Todo.ItemControllerTest do
     conn = conn
            |> with_valid_auth_token_header
            |> put("/api/lists/#{list_id}/items/#{id}/finish")
-    assert json_response(conn, 404) == %{"errors" => %{"detail" => "Resource not found"}}
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "Item not found"}}
   end
 
   test "PUT /lists/:list_id/items/:id/finish with malformed list id throws 400", %{conn: conn} do
@@ -133,7 +133,7 @@ defmodule Todo.ItemControllerTest do
     assert response(conn, 401) == "unauthorized"
   end
 
-  test "DELETE /lists/:list_id/items/:id/finish with authentication finishes item", %{conn: conn} do
+  test "DELETE /lists/:list_id/items/:id/finish with authentication deletes item", %{conn: conn} do
     {:ok, %{id: list_id, name: "Grocery List"}=list} = Todo.Repo.insert(%Todo.List{name: "Grocery List"})
     changeset = Ecto.build_assoc(list, :items, name: "Milk")
     {:ok, %{id: id}} = Repo.insert(changeset)
@@ -151,7 +151,7 @@ defmodule Todo.ItemControllerTest do
     conn = conn
            |> with_valid_auth_token_header
            |> delete("/api/lists/#{list_id}/items/#{id}")
-    assert json_response(conn, 404) == %{"errors" => %{"detail" => "Resource not found"}}
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "Item not found"}}
   end
 
   test "DELETE /lists/:list_id/items/:id/finish with nonexistent item throws 404", %{conn: conn} do
@@ -161,7 +161,7 @@ defmodule Todo.ItemControllerTest do
     conn = conn
            |> with_valid_auth_token_header
            |> delete("/api/lists/#{list_id}/items/#{id}")
-    assert json_response(conn, 404) == %{"errors" => %{"detail" => "Resource not found"}}
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "Item not found"}}
   end
 
   test "DELETE /lists/:list_id/items/:id/finish with malformed list id throws 400", %{conn: conn} do

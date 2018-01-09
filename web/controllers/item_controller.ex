@@ -1,7 +1,9 @@
 defmodule Todo.ItemController do
   use Todo.Web, :controller
 
-  alias Todo.{ErrorView, Repo, List, Item}
+  alias Todo.{Repo, List, Item}
+
+  import Todo.ErrorHelpers
 
   def create(conn, %{"list_id" => list_id, "item" => %{"name" => name}}) do
     with list = %List{}   <- Repo.get(List, list_id),
@@ -12,22 +14,16 @@ defmodule Todo.ItemController do
       |> put_status(201)
       |> render("show.json", item: item)
     else
-      nil ->
-        conn
-        |> put_status(404)
-        |> render(ErrorView, "404.json", %{error: "Resource not found"})
-      {:error, %{errors: errors}} ->
-        conn
-        |> put_status(422)
-        |> render(ErrorView, "422.json", %{errors: errors})
+      nil -> not_found(conn, "Item not found")
+      {:error, %{errors: errors}} -> errors(conn, errors)
     end
   end
 
   def finish(conn, %{"list_id" => list_id, "id" => id}) do
     with {:ok, list_id}   <- Ecto.UUID.cast(list_id),
          {:ok, id}        <- Ecto.UUID.cast(id),
-         %List{}          <- Repo.get(List, list_id),
-         item = %Item{}   <- Repo.get(Item, id) |> Repo.preload(:list),
+         list = %List{}   <- Repo.get(List, list_id),
+         item = %Item{}   <- find_item(list, id),
          changeset        <- Item.changeset(item, %{finished_at: DateTime.utc_now}),
          {:ok, updated}   <- Repo.update(changeset) do
 
@@ -35,40 +31,31 @@ defmodule Todo.ItemController do
         |> put_status(201)
         |> render("show.json", item: updated)
     else
-      nil ->
-        conn
-        |> put_status(404)
-        |> render(ErrorView, "404.json", %{error: "Resource not found"})
-      :error ->
-        conn
-        |> put_status(400)
-        |> render(ErrorView, "400.json", %{error: "Bad request"})
-      {:error, %{errors: errors}} ->
-        conn
-        |> put_status(422)
-        |> render(ErrorView, "422.json", %{errors: errors})
+      nil -> not_found(conn, "Item not found")
+      :error -> malformed_request(conn)
+      {:error, %{errors: errors}} -> errors(conn, errors)
     end
   end
 
   def delete(conn, %{"list_id" => list_id, "id" => id}) do
     with {:ok, list_id}   <- Ecto.UUID.cast(list_id),
          {:ok, id}        <- Ecto.UUID.cast(id),
-         %List{}          <- Repo.get(List, list_id),
-         item = %Item{}   <- Repo.get(Item, id) do
+         list = %List{}   <- Repo.get(List, list_id),
+         item = %Item{}   <- assoc(list, :items) |> Repo.get(id),
+         {:ok, _item}     <- Repo.delete(item) do
 
-      Repo.delete!(item)
       conn
       |> put_status(204)
       |> send_resp(:no_content, "")
     else
-      nil ->
-        conn
-        |> put_status(404)
-        |> render(ErrorView, "404.json", %{error: "Resource not found"})
-      :error ->
-        conn
-        |> put_status(400)
-        |> render(ErrorView, "400.json", %{error: "Bad request"})
+      nil -> not_found(conn, "Item not found")
+      :error -> malformed_request(conn)
     end
+  end
+
+  defp find_item(list, id) do
+    assoc(list, :items)
+    |> Repo.get(id)
+    |> Repo.preload(:list)
   end
 end

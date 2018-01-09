@@ -1,7 +1,9 @@
 defmodule Todo.ListController do
   use Todo.Web, :controller
 
-  alias Todo.{ErrorView, Repo, List}
+  alias Todo.{Repo, List}
+
+  import Todo.ErrorHelpers
 
   def index(conn, _params) do
     user = Todo.UserSession.current_user(conn)
@@ -11,14 +13,12 @@ defmodule Todo.ListController do
   def show(conn, %{"id" => uuid}) do
     with user             <- Todo.UserSession.current_user(conn),
          {:ok, uuid}      <- Ecto.UUID.cast(uuid),
-         list = %List{}   <- assoc(user, :lists)
-                             |> Repo.get(uuid)
-                             |> Repo.preload(:items) do
+         list = %List{}   <- find_list(user, uuid) do
 
       render(conn, "show.json", list: list)
     else
       :error -> malformed_request(conn)
-      nil -> not_found(conn)
+      nil -> not_found(conn, "List not found")
     end
   end
 
@@ -38,9 +38,7 @@ defmodule Todo.ListController do
   def update(conn, %{"id" => uuid, "list" => params}) do
     with user               <- Todo.UserSession.current_user(conn),
          {:ok, uuid}        <- Ecto.UUID.cast(uuid),
-         list = %List{}     <- assoc(user, :lists)
-                               |> Repo.get(uuid)
-                               |> Repo.preload(:user),
+         list = %List{}     <- find_list(user, uuid),
          changeset          <- List.changeset(list, params),
          {:ok, updated}     <- Repo.update(changeset) do
 
@@ -48,7 +46,7 @@ defmodule Todo.ListController do
       |> put_status(201)
       |> render("update.json", list: updated)
     else
-      nil -> not_found(conn)
+      nil -> not_found(conn, "List not found")
       :error -> malformed_request(conn)
       {:error, %{errors: errors}} -> errors(conn, errors)
     end
@@ -57,33 +55,22 @@ defmodule Todo.ListController do
   def delete(conn, %{"id" => uuid}) do
     with user               <- Todo.UserSession.current_user(conn),
          {:ok, uuid}        <- Ecto.UUID.cast(uuid),
-         list = %List{}     <- assoc(user, :lists) |> Repo.get(uuid) do
+         list = %List{}     <- find_list(user, uuid),
+         {:ok, _list}       <- Repo.delete(list) do
 
-      Repo.delete!(list)
       conn
       |> put_status(204)
       |> send_resp(:no_content, "")
     else
       :error -> malformed_request(conn)
-      nil -> not_found(conn)
+      nil -> not_found(conn, "List not found")
     end
   end
 
-  defp malformed_request(conn) do
-    conn
-    |> put_status(400)
-    |> render(ErrorView, "400.json", %{error: "Bad request"})
-  end
-
-  defp not_found(conn) do
-    conn
-    |> put_status(404)
-    |> render(ErrorView, "404.json", %{error: "List not found"})
-  end
-
-  defp errors(conn, errors) do
-    conn
-    |> put_status(422)
-    |> render(ErrorView, "422.json", %{errors: errors})
+  defp find_list(user, id) do
+    assoc(user, :lists)
+    |> Repo.get(id)
+    |> Repo.preload(:items)
+    |> Repo.preload(:user)
   end
 end
