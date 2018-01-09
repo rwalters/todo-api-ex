@@ -23,7 +23,7 @@ defmodule Todo.ItemController do
     with {:ok, list_id}   <- Ecto.UUID.cast(list_id),
          {:ok, id}        <- Ecto.UUID.cast(id),
          list = %List{}   <- Repo.get(List, list_id),
-         item = %Item{}   <- find_item(list, id),
+         item = %Item{}   <- find_item(list, id) |> Repo.preload(:list),
          changeset        <- Item.changeset(item, %{finished_at: DateTime.utc_now}),
          {:ok, updated}   <- Repo.update(changeset) do
 
@@ -41,7 +41,7 @@ defmodule Todo.ItemController do
     with {:ok, list_id}   <- Ecto.UUID.cast(list_id),
          {:ok, id}        <- Ecto.UUID.cast(id),
          list = %List{}   <- Repo.get(List, list_id),
-         item = %Item{}   <- assoc(list, :items) |> Repo.get(id),
+         item = %Item{}   <- find_item(list, id),
          {:ok, _item}     <- Repo.delete(item) do
 
       conn
@@ -56,6 +56,5 @@ defmodule Todo.ItemController do
   defp find_item(list, id) do
     assoc(list, :items)
     |> Repo.get(id)
-    |> Repo.preload(:list)
   end
 end

@@ -13,7 +13,7 @@ defmodule Todo.ListController do
   def show(conn, %{"id" => uuid}) do
     with user             <- Todo.UserSession.current_user(conn),
          {:ok, uuid}      <- Ecto.UUID.cast(uuid),
-         list = %List{}   <- find_list(user, uuid) do
+         list = %List{}   <- find_list(user, uuid) |> Repo.preload(:items) do
 
       render(conn, "show.json", list: list)
     else
@@ -38,7 +38,7 @@ defmodule Todo.ListController do
   def update(conn, %{"id" => uuid, "list" => params}) do
     with user               <- Todo.UserSession.current_user(conn),
          {:ok, uuid}        <- Ecto.UUID.cast(uuid),
-         list = %List{}     <- find_list(user, uuid),
+         list = %List{}     <- find_list(user, uuid) |> Repo.preload(:user),
          changeset          <- List.changeset(list, params),
          {:ok, updated}     <- Repo.update(changeset) do
 
@@ -70,7 +70,5 @@ defmodule Todo.ListController do
   defp find_list(user, id) do
     assoc(user, :lists)
     |> Repo.get(id)
-    |> Repo.preload(:items)
-    |> Repo.preload(:user)
   end
 end
