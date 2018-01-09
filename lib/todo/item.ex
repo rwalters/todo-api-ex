@@ -17,6 +17,6 @@ defmodule Todo.Item do
   def changeset(%Item{} = item, attrs \\ %{}) do
     item
     |> cast(attrs, [:name, :id, :finished_at])
-    |> validate_required([:name])
+    |> validate_required([:name, :list])
   end
 end

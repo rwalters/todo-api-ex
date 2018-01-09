@@ -4,9 +4,9 @@ defmodule Todo.ItemController do
   alias Todo.{ErrorView, Repo, List, Item}
 
   def create(conn, %{"list_id" => list_id, "item" => %{"name" => name}}) do
-    with list = %List{} <- Repo.get(List, list_id),
-         changeset = Ecto.build_assoc(list, :items, name: name),
-      {:ok, item} <- Repo.insert(changeset) do
+    with list = %List{}   <- Repo.get(List, list_id),
+         changeset        <- Ecto.build_assoc(list, :items, name: name),
+         {:ok, item}      <- Repo.insert(changeset) do
 
       conn
       |> put_status(201)
@@ -24,12 +24,13 @@ defmodule Todo.ItemController do
   end
 
   def finish(conn, %{"list_id" => list_id, "id" => id}) do
-    with {:ok, list_id} <- Ecto.UUID.cast(list_id),
-         {:ok, id} <- Ecto.UUID.cast(id),
-         %List{} <- Repo.get(List, list_id),
-         item = %Item{} <- Repo.get(Item, id),
-         changeset = Item.changeset(item, %{finished_at: DateTime.utc_now}),
-      {:ok, updated} <- Repo.update(changeset) do
+    with {:ok, list_id}   <- Ecto.UUID.cast(list_id),
+         {:ok, id}        <- Ecto.UUID.cast(id),
+         %List{}          <- Repo.get(List, list_id),
+         item = %Item{}   <- Repo.get(Item, id) |> Repo.preload(:list),
+         changeset        <- Item.changeset(item, %{finished_at: DateTime.utc_now}),
+         {:ok, updated}   <- Repo.update(changeset) do
+
         conn
         |> put_status(201)
         |> render("show.json", item: updated)
@@ -50,10 +51,11 @@ defmodule Todo.ItemController do
   end
 
   def delete(conn, %{"list_id" => list_id, "id" => id}) do
-    with {:ok, list_id} <- Ecto.UUID.cast(list_id),
-         {:ok, id} <- Ecto.UUID.cast(id),
-         %List{} <- Repo.get(List, list_id),
-         item = %Item{} <- Repo.get(Item, id) do
+    with {:ok, list_id}   <- Ecto.UUID.cast(list_id),
+         {:ok, id}        <- Ecto.UUID.cast(id),
+         %List{}          <- Repo.get(List, list_id),
+         item = %Item{}   <- Repo.get(Item, id) do
+
       Repo.delete!(item)
       conn
       |> put_status(204)

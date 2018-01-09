@@ -20,6 +20,6 @@ defmodule Todo.List do
   def changeset(%List{} = list, attrs \\ %{}) do
     list
     |> cast(attrs, [:name, :id])
-    |> validate_required([:name])
+    |> validate_required([:name, :user])
   end
 end
