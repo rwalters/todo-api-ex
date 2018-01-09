@@ -3,6 +3,7 @@ defmodule Todo.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
   end
 
   pipeline :basic_auth do

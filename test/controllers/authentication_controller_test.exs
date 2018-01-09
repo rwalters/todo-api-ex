@@ -29,6 +29,7 @@ defmodule Todo.AuthenticationControllerTest do
     conn = conn
            |> with_valid_authorization_header
            |> post("/api/authenticate")
+
     assert %{"expires_at" => _, "token" => _} = json_response(conn, 200)
   end
 end
