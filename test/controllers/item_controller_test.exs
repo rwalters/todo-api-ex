@@ -5,7 +5,7 @@ defmodule Todo.ItemControllerTest do
 
   def with_valid_auth_token_header(conn) do
     {:ok, client} = Exredis.start_link
-    client |> Exredis.Api.setex("abcdef", 1, true)
+    client |> Exredis.Api.setex("token.abcdef", 1, true)
 
     conn
     |> put_req_header("authorization", "Token token=\"abcdef\"")

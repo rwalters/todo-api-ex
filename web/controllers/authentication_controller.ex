@@ -24,7 +24,7 @@ defmodule Todo.AuthenticationController do
     token = Ecto.UUID.generate()
 
     {:ok, client} = Exredis.start_link
-    client |> Exredis.Api.setex(token, 1200, user_id)
+    client |> Exredis.Api.setex("token.#{token}", 1200, user_id)
 
     token
   end

@@ -29,7 +29,7 @@ defmodule TokenAuth do
   defp find_token(token) do
     token = String.replace(token, ~r/"/, "")
     {:ok, client} = Exredis.start_link
-    user_id = Exredis.Api.get(client ,token)
+    user_id = Exredis.Api.get(client, "token.#{token}")
 
     case user_id do
       :undefined -> false

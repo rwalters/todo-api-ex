@@ -6,7 +6,7 @@ defmodule Todo.ListControllerTest do
   def with_valid_auth_token_header(conn, user) do
     token = Ecto.UUID.generate()
     {:ok, client} = Exredis.start_link
-    client |> Exredis.Api.setex(token, 1, user.id)
+    client |> Exredis.Api.setex("token.#{token}", 1, user.id)
 
     conn
     |> assign(:user_id, user.id)
