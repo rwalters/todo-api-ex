@@ -3,13 +3,13 @@ defmodule Todo.List do
   alias Todo.List
 
   schema "lists" do
-    field :name, :string
-    has_many :items, Todo.Item
+    field(:name, :string)
+    has_many(:items, Todo.Item)
 
-    field :username, :string, virtual: true
-    field :password, :string, virtual: true
+    field(:username, :string, virtual: true)
+    field(:password, :string, virtual: true)
 
-    belongs_to :user, Todo.User
+    belongs_to(:user, Todo.User)
 
     timestamps()
   end
