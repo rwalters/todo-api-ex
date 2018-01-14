@@ -4,10 +4,10 @@ defmodule Todo.User do
   alias Todo.User
 
   schema "users" do
-    field :encrypted_username_password, :string
-    field :username, :string, virtual: true
-    field :password, :string, virtual: true
-    has_many :lists, Todo.List
+    field(:encrypted_username_password, :string)
+    field(:username, :string, virtual: true)
+    field(:password, :string, virtual: true)
+    has_many(:lists, Todo.List)
 
     timestamps()
   end
@@ -21,7 +21,10 @@ defmodule Todo.User do
     |> encrypt_username_and_password()
   end
 
-  def encrypt_username_and_password(%Ecto.Changeset{valid?: true, changes: %{username: username, password: password}} = changeset) do
+  def encrypt_username_and_password(
+        %Ecto.Changeset{valid?: true, changes: %{username: username, password: password}} =
+          changeset
+      ) do
     put_change(
       changeset,
       :encrypted_username_password,

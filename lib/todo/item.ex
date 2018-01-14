@@ -4,9 +4,9 @@ defmodule Todo.Item do
   alias Todo.Item
 
   schema "items" do
-    field :name, :string
-    field :finished_at, :utc_datetime
-    belongs_to :list, Todo.List
+    field(:name, :string)
+    field(:finished_at, :utc_datetime)
+    belongs_to(:list, Todo.List)
 
     timestamps()
   end

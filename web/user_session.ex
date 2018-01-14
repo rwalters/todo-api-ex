@@ -17,7 +17,7 @@ defmodule Todo.UserSession do
 
   defp load_current_user(conn) do
     with id <- Plug.Conn.get_session(conn, :user_id),
-      user <- Todo.Repo.get!(Todo.User, id) |> Todo.Repo.preload(:lists) do
+         user <- Todo.Repo.get!(Todo.User, id) |> Todo.Repo.preload(:lists) do
       login_user(conn, user)
 
       user

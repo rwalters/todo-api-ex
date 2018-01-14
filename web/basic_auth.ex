@@ -16,6 +16,7 @@ defmodule BasicAuth do
           nil ->
             unauthorized(conn)
         end
+
       _ ->
         unauthorized(conn)
     end

@@ -2,6 +2,7 @@ defmodule Todo.ErrorHelpers do
   alias Todo.ErrorView
 
   def malformed_request(conn), do: malformed_request(conn, "Bad request")
+
   def malformed_request(conn, errors) do
     conn
     |> Plug.Conn.put_status(400)
@@ -9,6 +10,7 @@ defmodule Todo.ErrorHelpers do
   end
 
   def not_found(conn), do: not_found(conn, "Resource not found")
+
   def not_found(conn, errors) do
     conn
     |> Plug.Conn.put_status(404)
@@ -16,6 +18,7 @@ defmodule Todo.ErrorHelpers do
   end
 
   def errors(conn), do: errors(conn, "Bad request")
+
   def errors(conn, errors) do
     conn
     |> Plug.Conn.put_status(422)

@@ -15,6 +15,7 @@ defmodule TokenAuth do
         else
           unauthorized(conn)
         end
+
       _ ->
         unauthorized(conn)
     end
@@ -28,7 +29,7 @@ defmodule TokenAuth do
 
   defp find_token(token) do
     token = String.replace(token, ~r/"/, "")
-    {:ok, client} = Exredis.start_link
+    {:ok, client} = Exredis.start_link()
     user_id = Exredis.Api.get(client, "token.#{token}")
 
     case user_id do

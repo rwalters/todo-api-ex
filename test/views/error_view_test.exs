@@ -5,22 +5,18 @@ defmodule Todo.ErrorViewTest do
   import Phoenix.View
 
   test "renders 404.json" do
-    assert render(Todo.ErrorView, "404.json", []) ==
-           %{errors: %{detail: "Resource not found"}}
+    assert render(Todo.ErrorView, "404.json", []) == %{errors: %{detail: "Resource not found"}}
   end
 
   test "render 500.json" do
-    assert render(Todo.ErrorView, "500.json", []) ==
-           %{errors: %{detail: "Internal server error"}}
+    assert render(Todo.ErrorView, "500.json", []) == %{errors: %{detail: "Internal server error"}}
   end
 
   test "renders 422.json" do
-    assert render(Todo.ErrorView, "422.json", []) ==
-      %{errors: %{detail: "Bad request"}}
+    assert render(Todo.ErrorView, "422.json", []) == %{errors: %{detail: "Bad request"}}
   end
 
   test "render any other" do
-    assert render(Todo.ErrorView, "505.json", []) ==
-           %{errors: %{detail: "Internal server error"}}
+    assert render(Todo.ErrorView, "505.json", []) == %{errors: %{detail: "Internal server error"}}
   end
 end
