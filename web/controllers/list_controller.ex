@@ -10,10 +10,10 @@ defmodule Todo.ListController do
     render(conn, "index.json", lists: user.lists)
   end
 
-  def show(conn, %{"id" => uuid}) do
+  def show(conn, %{"id" => list_id}) do
     with user <- Todo.UserSession.current_user(conn),
-         {:ok, uuid} <- Ecto.UUID.cast(uuid),
-         list = %List{} <- find_list(user, uuid) |> Repo.preload(:items) do
+         {:ok, list_id} <- Ecto.UUID.cast(list_id),
+         list = %List{} <- find_list(user, list_id) |> Repo.preload(:items) do
       render(conn, "show.json", list: list)
     else
       :error -> malformed_request(conn)
@@ -33,10 +33,10 @@ defmodule Todo.ListController do
     end
   end
 
-  def update(conn, %{"id" => uuid, "list" => params}) do
+  def update(conn, %{"id" => list_id, "list" => params}) do
     with user <- Todo.UserSession.current_user(conn),
-         {:ok, uuid} <- Ecto.UUID.cast(uuid),
-         list = %List{} <- find_list(user, uuid) |> Repo.preload(:user),
+         {:ok, list_id} <- Ecto.UUID.cast(list_id),
+         list = %List{} <- find_list(user, list_id) |> Repo.preload(:user),
          changeset <- List.changeset(list, params),
          {:ok, updated} <- Repo.update(changeset) do
       conn
@@ -49,10 +49,10 @@ defmodule Todo.ListController do
     end
   end
 
-  def delete(conn, %{"id" => uuid}) do
+  def delete(conn, %{"id" => list_id}) do
     with user <- Todo.UserSession.current_user(conn),
-         {:ok, uuid} <- Ecto.UUID.cast(uuid),
-         list = %List{} <- find_list(user, uuid),
+         {:ok, list_id} <- Ecto.UUID.cast(list_id),
+         list = %List{} <- find_list(user, list_id),
          {:ok, _list} <- Repo.delete(list) do
       conn
       |> put_status(204)
