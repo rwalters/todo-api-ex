@@ -8,16 +8,18 @@ defmodule Exredis do
   end
 
   def start_link() do
-    GenServer.start_link(__MODULE__, %{})
+    GenServer.start_link(__MODULE__, %{}, [name: Exredis])
+
+    {:ok, :pid}
   end
 
   defmodule Api do
-    def setex(pid, key, _timeout, value) do
-      GenServer.cast(pid, {:push, {key, value}})
+    def setex(_pid, key, _timeout, value) do
+      GenServer.cast(Exredis, {:push, {key, value}})
     end
 
-    def get(pid, key) do
-      GenServer.call(pid, {:pop, key})
+    def get(_pid, key) do
+      GenServer.call(Exredis, {:pop, key})
     end
   end
 
