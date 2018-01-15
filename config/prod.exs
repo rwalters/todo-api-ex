@@ -24,6 +24,9 @@ config :todo, Todo.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true
 
+config :exredis,
+  host: System.get_env("REDIS_URL"),
+
 # Do not print debug messages in production
 config :logger, level: :info
 
