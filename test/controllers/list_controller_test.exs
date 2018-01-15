@@ -1,6 +1,5 @@
 defmodule Todo.ListControllerTest do
   use Todo.ConnCase
-  require Exredis.Api
 
   def with_valid_auth_token_header(conn), do: with_valid_auth_token_header(conn, create_user())
 
