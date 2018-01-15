@@ -1,8 +1,6 @@
 defmodule Todo.ItemControllerTest do
   use Todo.ConnCase
 
-  require Exredis.Api
-
   def with_valid_auth_token_header(conn) do
     {:ok, client} = Exredis.start_link()
     client |> Exredis.Api.setex("token.abcdef", 1, true)
