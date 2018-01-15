@@ -13,7 +13,7 @@ use Mix.Config
 # which you typically run after static files are built.
 config :todo, Todo.Endpoint,
   load_from_system_env: true,
-  url: [scheme: "http", host: "infinite-citadel-30984.herokuapp.com", port: 443],
+  url: [scheme: "http", host: "infinite-citadel-30984.herokuapp.com", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json",
   secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE")
 
