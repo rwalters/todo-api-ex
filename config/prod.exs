@@ -25,7 +25,7 @@ config :todo, Todo.Repo,
   ssl: true
 
 config :exredis,
-  host: System.get_env("REDIS_URL"),
+  host: System.get_env("REDIS_URL")
 
 # Do not print debug messages in production
 config :logger, level: :info
