@@ -2,7 +2,7 @@ defmodule Cache do
   use GenServer
   use Timex
 
-  def start_link(opts \\ []) do
+  def start_link(_opts \\ []) do
     GenServer.start_link(
       __MODULE__,
       [
