@@ -18,4 +18,9 @@ defmodule TokenCacheTest do
     TokenCache.Api.set(client, "token", true)
     assert TokenCache.Api.get(client, "token") == true
   end
+
+  test "fetch value with invalid key" do
+    {:ok, client} = TokenCache.start_link()
+    assert TokenCache.Api.get(client, "neverset") == nil
+  end
 end
