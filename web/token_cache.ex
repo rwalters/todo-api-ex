@@ -1,5 +1,6 @@
 defmodule TokenCache do
   use GenServer
+  use Timex
 
   # Client
 
@@ -8,14 +9,22 @@ defmodule TokenCache do
   end
 
   def start_link() do
-    GenServer.start_link(__MODULE__, %{}, [name: TokenCache])
+    GenServer.start_link(__MODULE__, %{}, name: TokenCache)
 
     {:ok, :pid}
   end
 
   defmodule Api do
-    def setex(_pid, key, _timeout, value) do
-      GenServer.cast(TokenCache, {:push, {key, value}})
+    def set(_pid, key, value) do
+      GenServer.cast(TokenCache, {:push, {key, {value, nil}}})
+    end
+
+    def setex(_pid, key, timeout, value) do
+      expires_at =
+        Timex.now()
+        |> Timex.add(Duration.from_seconds(timeout))
+
+      GenServer.cast(TokenCache, {:push, {key, {value, expires_at}}})
     end
 
     def get(_pid, key) do
@@ -25,8 +34,24 @@ defmodule TokenCache do
 
   # Server (callbacks)
 
+  defp get_key_with_timeout(state, key) do
+    with {value, expires_at} when not is_nil(expires_at) <- Map.get(state, key),
+         1 <- Timex.compare(expires_at, Timex.now()) do
+      {value, state}
+    else
+      {value, nil} -> {value, state}
+      nil -> {nil, state}
+      x when x in -1..0 -> {nil, Map.delete(state, key)}
+    end
+  end
+
   def handle_call({:pop, key}, _from, state) do
-    {:reply, state[key], state}
+    with {value, state} <- get_key_with_timeout(state, key) do
+      {:reply, value, state}
+    else
+      {nil, state} -> {:reply, nil, state}
+      _ -> {:reply, nil, state}
+    end
   end
 
   def handle_call(request, from, state) do
@@ -34,8 +59,8 @@ defmodule TokenCache do
     super(request, from, state)
   end
 
-  def handle_cast({:push, {key, value}}, state) do
-    {:noreply, Map.merge(state, %{key => value})}
+  def handle_cast({:push, {key, {value, timeout}}}, state) do
+    {:noreply, Map.merge(state, %{key => {value, timeout}})}
   end
 
   def handle_cast(request, state) do
