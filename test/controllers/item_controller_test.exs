@@ -2,8 +2,8 @@ defmodule Todo.ItemControllerTest do
   use Todo.ConnCase
 
   def with_valid_auth_token_header(conn) do
-    {:ok, client} = TokenCache.start_link()
-    client |> TokenCache.Api.setex("token.abcdef", 1, true)
+    Cache.start_link()
+    Cache.setex("token.abcdef", 1, true)
 
     conn
     |> put_req_header("authorization", "Token token=\"abcdef\"")

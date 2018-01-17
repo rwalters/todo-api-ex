@@ -5,8 +5,8 @@ defmodule Todo.ListControllerTest do
 
   def with_valid_auth_token_header(conn, user) do
     token = Ecto.UUID.generate()
-    {:ok, client} = TokenCache.start_link()
-    client |> TokenCache.Api.setex("token.#{token}", 1, user.id)
+    Cache.start_link()
+    Cache.setex("token.#{token}", 1, user.id)
 
     conn
     |> assign(:user_id, user.id)

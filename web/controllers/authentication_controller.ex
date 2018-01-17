@@ -1,6 +1,5 @@
 defmodule Todo.AuthenticationController do
   import Plug.Conn
-  require TokenCache.Api
 
   use Todo.Web, :controller
   use Timex
@@ -27,8 +26,8 @@ defmodule Todo.AuthenticationController do
   defp generate_and_cache_token(user_id) do
     token = Ecto.UUID.generate()
 
-    {:ok, client} = TokenCache.start_link()
-    client |> TokenCache.Api.setex("token.#{token}", 1200, user_id)
+    Cache.start_link()
+    Cache.setex("token.#{token}", 1200, user_id)
 
     token
   end

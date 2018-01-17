@@ -1,6 +1,6 @@
 defmodule TokenAuth do
   import Plug.Conn
-  require TokenCache.Api
+  require Cache
 
   def init(opts) do
     opts
@@ -29,11 +29,11 @@ defmodule TokenAuth do
 
   defp find_token(token) do
     token = String.replace(token, ~r/"/, "")
-    {:ok, client} = TokenCache.start_link()
-    user_id = TokenCache.Api.get(client, "token.#{token}")
+    Cache.start_link()
+    user_id = Cache.get("token.#{token}")
 
     case user_id do
-      :undefined -> false
+      {:not_found} -> false
       _ -> user_id
     end
   end

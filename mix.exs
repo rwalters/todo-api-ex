@@ -20,7 +20,8 @@ defmodule Todo.Mixfile do
   def application do
     [
       mod: {Todo, []},
-      extra_applications: [:logger]
+      extra_applications: [:logger],
+      registered: [Cache]
     ]
   end
 
