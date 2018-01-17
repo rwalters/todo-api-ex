@@ -37,20 +37,20 @@ defmodule TokenCache do
   defp get_key_with_timeout(state, key) do
     with {value, expires_at} when not is_nil(expires_at) <- Map.get(state, key),
          1 <- Timex.compare(expires_at, Timex.now()) do
-      {value, state}
+      {:found, value}
     else
-      {value, nil} -> {value, state}
-      nil -> {nil, state}
-      x when x in -1..0 -> {nil, Map.delete(state, key)}
+      {value, nil} -> {:found, value}
+      nil -> {:notfound}
+      x when x in -1..0 -> {:expired}
     end
   end
 
   def handle_call({:pop, key}, _from, state) do
-    with {value, state} <- get_key_with_timeout(state, key) do
+    with {:found, value} <- get_key_with_timeout(state, key) do
       {:reply, value, state}
     else
-      {nil, state} -> {:reply, nil, state}
-      _ -> {:reply, nil, state}
+      {:notfound} -> {:reply, nil, state}
+      {:expired} -> {:reply, nil, Map.delete(state, key)}
     end
   end
 
