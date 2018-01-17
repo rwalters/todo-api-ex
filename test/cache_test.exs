@@ -18,4 +18,9 @@ defmodule CacheTest do
     Cache.setex("token", -1200, "abcdef")
     assert Cache.get("token") == nil
   end
+
+  test "cache get unknown key" do
+    Cache.start_link()
+    assert Cache.get("not set token") == nil
+  end
 end

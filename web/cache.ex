@@ -37,7 +37,7 @@ defmodule Cache do
     with [{_key, {value, expires_at}}] when not is_nil(expires_at) <-
            :ets.lookup(ets_table_name, key),
          1 <- Timex.compare(expires_at, Timex.now()) do
-      value
+      {:found, value}
     else
       [{_key, {value, nil}}] ->
         {:found, value}
@@ -55,7 +55,7 @@ defmodule Cache do
     case get_key_with_timeout(state, key) do
       {:found, result} -> {:reply, result, state}
       {:expired} -> {:reply, nil, state}
-      result -> {:reply, result, state}
+      {:not_found} -> {:reply, nil, state}
     end
   end
 
