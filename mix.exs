@@ -20,7 +20,8 @@ defmodule Todo.Mixfile do
   def application do
     [
       mod: {Todo, []},
-      extra_applications: [:logger]
+      extra_applications: [:logger],
+      registered: [Cache]
     ]
   end
 
@@ -40,7 +41,6 @@ defmodule Todo.Mixfile do
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
       {:timex, "~> 3.1"},
-      {:exredis, ">= 0.2.4"},
       {:logger_file_backend, "~> 0.0.10"}
     ]
   end
