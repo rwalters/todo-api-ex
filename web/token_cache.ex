@@ -1,4 +1,4 @@
-defmodule Exredis do
+defmodule TokenCache do
   use GenServer
 
   # Client
@@ -8,18 +8,18 @@ defmodule Exredis do
   end
 
   def start_link() do
-    GenServer.start_link(__MODULE__, %{}, [name: Exredis])
+    GenServer.start_link(__MODULE__, %{}, [name: TokenCache])
 
     {:ok, :pid}
   end
 
   defmodule Api do
     def setex(_pid, key, _timeout, value) do
-      GenServer.cast(Exredis, {:push, {key, value}})
+      GenServer.cast(TokenCache, {:push, {key, value}})
     end
 
     def get(_pid, key) do
-      GenServer.call(Exredis, {:pop, key})
+      GenServer.call(TokenCache, {:pop, key})
     end
   end
 

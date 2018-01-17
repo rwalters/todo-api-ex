@@ -1,6 +1,6 @@
 defmodule TokenAuth do
   import Plug.Conn
-  require Exredis.Api
+  require TokenCache.Api
 
   def init(opts) do
     opts
@@ -29,8 +29,8 @@ defmodule TokenAuth do
 
   defp find_token(token) do
     token = String.replace(token, ~r/"/, "")
-    {:ok, client} = Exredis.start_link()
-    user_id = Exredis.Api.get(client, "token.#{token}")
+    {:ok, client} = TokenCache.start_link()
+    user_id = TokenCache.Api.get(client, "token.#{token}")
 
     case user_id do
       :undefined -> false
