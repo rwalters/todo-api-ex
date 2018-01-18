@@ -14,6 +14,14 @@ defmodule TodoWeb.Router do
     plug(:fetch_session)
   end
 
+  pipeline :basic_auth do
+    plug(BasicAuth)
+  end
+
+  pipeline :token_auth do
+    plug(TokenAuth)
+  end
+
   scope "/", TodoWeb do
     pipe_through :browser # Use the default browser stack
 
@@ -25,5 +33,11 @@ defmodule TodoWeb.Router do
   scope "/api", Todo do
     pipe_through([:api])
     get("/lists", ListController, :index)
+    get("/lists", ListController, :index)
+    get("/lists/:id", ListController, :show)
+    post("/lists", ListController, :create)
+    delete("/lists/:id", ListController, :delete)
+    patch("/lists/:id", ListController, :update)
+
   end
 end
