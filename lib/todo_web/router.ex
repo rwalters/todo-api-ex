@@ -11,6 +11,7 @@ defmodule TodoWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug(:fetch_session)
   end
 
   scope "/", TodoWeb do
@@ -20,7 +21,9 @@ defmodule TodoWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", TodoWeb do
-  #   pipe_through :api
-  # end
+
+  scope "/api", Todo do
+    pipe_through([:api])
+    get("/lists", ListController, :index)
+  end
 end
