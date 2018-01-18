@@ -1,4 +1,4 @@
-defmodule Todo.ErrorHelpers do
+defmodule TodoWeb.ErrorHelpers do
   alias TodoWeb.ErrorView
 
   def malformed_request(conn), do: malformed_request(conn, "Bad request")

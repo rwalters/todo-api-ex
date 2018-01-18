@@ -3,7 +3,7 @@ defmodule Todo.ListController do
 
   alias Todo.{Repo, List}
 
-  import Todo.ErrorHelpers
+  import TodoWeb.ErrorHelpers
 
   def index(conn, _params) do
     user = Todo.UserSession.current_user(conn)

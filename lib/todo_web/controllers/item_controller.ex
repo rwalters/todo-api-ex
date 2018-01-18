@@ -3,7 +3,7 @@ defmodule Todo.ItemController do
 
   alias Todo.{Repo, List, Item}
 
-  import Todo.ErrorHelpers
+  import TodoWeb.ErrorHelpers
 
   def create(conn, %{"list_id" => list_id, "item" => %{"name" => name}}) do
     with list = %List{} <- Repo.get(List, list_id),
