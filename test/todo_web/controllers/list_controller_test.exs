@@ -30,4 +30,12 @@ defmodule Todo.ListControllerTest do
     with {:ok, list} = Ecto.build_assoc(user, :lists, name: name) |> Todo.Repo.insert(), do: list
   end
 
+  test "GET /api/lists without authentication throws 401", %{conn: conn} do
+    conn =
+      conn
+      |> with_invalid_auth_token_header
+      |> get("/api/lists")
+
+    assert response(conn, 401) == "unauthorized"
+  end
 end
