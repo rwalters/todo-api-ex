@@ -2,7 +2,7 @@ defmodule TodoWeb.Router do
   use TodoWeb, :router
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug(:accepts, ["json"])
     plug(:fetch_session)
   end
 

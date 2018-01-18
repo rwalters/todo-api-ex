@@ -11,7 +11,7 @@ defmodule Todo.Application do
       # Start the Ecto repository
       supervisor(Todo.Repo, []),
       # Start the endpoint when the application starts
-      supervisor(TodoWeb.Endpoint, []),
+      supervisor(TodoWeb.Endpoint, [])
       # Start your own worker by calling: Todo.Worker.start_link(arg1, arg2, arg3)
       # worker(Todo.Worker, [arg1, arg2, arg3]),
     ]

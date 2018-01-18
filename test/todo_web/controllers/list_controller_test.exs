@@ -118,10 +118,10 @@ defmodule Todo.ListControllerTest do
       |> with_valid_auth_token_header(user)
       |> get("/api/lists/#{list.id}")
 
-      %{"name" => "Shopping", "id" => id, "src" => _src, "items" => _items} =
+    %{"name" => "Shopping", "id" => id, "src" => _src, "items" => _items} =
       json_response(conn, 200)
 
-      assert list.id == id
+    assert list.id == id
   end
 
   test "GET /api/list/:id with authentication returns list with items", %{conn: conn} do
@@ -134,10 +134,10 @@ defmodule Todo.ListControllerTest do
       |> with_valid_auth_token_header(user)
       |> get("/api/lists/#{list.id}")
 
-      %{"name" => "Shopping", "id" => _id, "src" => _src, "items" => items} =
+    %{"name" => "Shopping", "id" => _id, "src" => _src, "items" => items} =
       json_response(conn, 200)
 
-      assert Enum.map(items, & &1["name"]) == ["Buy Milk", "Buy Onions"]
+    assert Enum.map(items, & &1["name"]) == ["Buy Milk", "Buy Onions"]
   end
 
   test "GET /api/list/:id returns 404 for list that doesn't belong to user", %{conn: conn} do

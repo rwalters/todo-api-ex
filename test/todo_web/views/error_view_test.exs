@@ -9,7 +9,9 @@ defmodule TodoWeb.ErrorViewTest do
   end
 
   test "render 500.json" do
-    assert render(TodoWeb.ErrorView, "500.json", []) == %{errors: %{detail: "Internal server error"}}
+    assert render(TodoWeb.ErrorView, "500.json", []) == %{
+             errors: %{detail: "Internal server error"}
+           }
   end
 
   test "renders 422.json" do
@@ -17,6 +19,8 @@ defmodule TodoWeb.ErrorViewTest do
   end
 
   test "render any other" do
-    assert render(TodoWeb.ErrorView, "500.json", []) == %{errors: %{detail: "Internal server error"}}
+    assert render(TodoWeb.ErrorView, "500.json", []) == %{
+             errors: %{detail: "Internal server error"}
+           }
   end
 end
