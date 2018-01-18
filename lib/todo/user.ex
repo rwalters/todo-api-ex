@@ -1,5 +1,5 @@
 defmodule Todo.User do
-  use Todo.Web, :schema
+  use TodoWeb, :schema
 
   alias Todo.User
 
