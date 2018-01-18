@@ -24,6 +24,7 @@ defmodule TodoWeb.Router do
 
   scope "/api", Todo do
     pipe_through([:api, :token_auth])
+
     get("/lists", ListController, :index)
     get("/lists/:id", ListController, :show)
     post("/lists", ListController, :create)
