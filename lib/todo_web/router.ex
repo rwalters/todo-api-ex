@@ -31,5 +31,8 @@ defmodule TodoWeb.Router do
     delete("/lists/:id", ListController, :delete)
     patch("/lists/:id", ListController, :update)
 
+    post("/lists/:list_id/items", ItemController, :create)
+    put("/lists/:list_id/items/:id/finish", ItemController, :finish)
+    delete("/lists/:list_id/items/:id", ItemController, :delete)
   end
 end
