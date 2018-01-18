@@ -30,7 +30,7 @@ defmodule Todo.ListView do
       id: list.id,
       src: "http://localhost:4000/lists/#{list.id}",
       name: list.name,
-      # items: render_many(list.items, Todo.ItemView, "item.json"),
+      items: render_many(list.items, Todo.ItemView, "item.json"),
       user_id: list.user_id
     }
   end
