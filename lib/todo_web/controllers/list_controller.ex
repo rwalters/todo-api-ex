@@ -4,7 +4,7 @@ defmodule Todo.ListController do
   alias Todo.{Repo}
 
   def index(conn, _params) do
-    lists = Todo.Repo.all(Todo.List)
-    render(conn, "index.json", lists: lists)
+    user = Todo.UserSession.current_user(conn)
+    render(conn, "index.json", lists: user.lists)
   end
 end
