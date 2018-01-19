@@ -1,4 +1,4 @@
-defmodule Todo.AuthenticationController do
+defmodule TodoWeb.AuthenticationController do
   import Plug.Conn
 
   use TodoWeb, :controller

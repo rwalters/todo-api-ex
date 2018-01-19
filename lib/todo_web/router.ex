@@ -16,7 +16,7 @@ defmodule TodoWeb.Router do
 
   # Other scopes may use custom stacks.
 
-  scope "/api", Todo do
+  scope "/api", TodoWeb do
     pipe_through([:api, :basic_auth])
 
     post("/authenticate", AuthenticationController, :authenticate)
