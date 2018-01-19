@@ -1,6 +1,8 @@
 defmodule TodoWeb.AuthenticationController do
   import Plug.Conn
 
+  alias Todo.Cache
+
   use TodoWeb, :controller
   use Timex
 

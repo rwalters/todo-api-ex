@@ -1,4 +1,6 @@
 defmodule Todo.CacheSupervisor do
+  alias Todo.Cache
+
   use Supervisor
 
   def start_link do

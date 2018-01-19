@@ -1,6 +1,7 @@
 defmodule TokenAuth do
   import Plug.Conn
-  require Cache
+
+  alias Todo.Cache
 
   def init(opts) do
     opts

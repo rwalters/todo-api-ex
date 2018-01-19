@@ -1,4 +1,6 @@
 defmodule Todo.ItemControllerTest do
+  alias Todo.Cache
+
   use TodoWeb.ConnCase
 
   def with_valid_auth_token_header(conn) do

@@ -1,4 +1,7 @@
-defmodule Cache do
+defmodule Todo.Cache do
+
+  alias Todo.Cache
+
   use GenServer
   use Timex
 

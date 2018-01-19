@@ -1,4 +1,6 @@
-defmodule CacheTest do
+defmodule Todo.CacheTest do
+  alias Todo.Cache
+
   use ExUnit.Case
 
   test "cache" do
