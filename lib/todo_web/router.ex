@@ -35,4 +35,14 @@ defmodule TodoWeb.Router do
     put("/lists/:list_id/items/:id/finish", ItemController, :finish)
     delete("/lists/:list_id/items/:id", ItemController, :delete)
   end
+
+  def swagger_info do
+    %{
+      info: %{
+        version: "1.0",
+        title: "Todoable",
+        host: "https://intense-hamlet-87296.herokuapp.com/"
+      }
+    }
+  end
 end
