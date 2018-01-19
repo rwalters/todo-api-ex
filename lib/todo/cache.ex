@@ -1,5 +1,4 @@
 defmodule Todo.Cache do
-
   alias Todo.Cache
 
   use GenServer
