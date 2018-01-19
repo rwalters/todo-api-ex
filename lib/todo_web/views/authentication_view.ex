@@ -1,4 +1,4 @@
-defmodule Todo.AuthenticationView do
+defmodule TodoWeb.AuthenticationView do
   use TodoWeb, :view
 
   def render("authenticate.json", %{token: token, expires_at: expires_at}) do

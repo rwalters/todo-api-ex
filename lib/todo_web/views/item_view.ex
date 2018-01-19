@@ -1,8 +1,8 @@
-defmodule Todo.ItemView do
+defmodule TodoWeb.ItemView do
   use TodoWeb, :view
 
   def render("show.json", %{item: item}) do
-    render_one(item, Todo.ItemView, "item.json")
+    render_one(item, TodoWeb.ItemView, "item.json")
   end
 
   def render("item.json", %{item: item}) do

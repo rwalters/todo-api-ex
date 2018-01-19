@@ -1,4 +1,4 @@
-defmodule Todo.ListController do
+defmodule TodoWeb.ListController do
   use TodoWeb, :controller
 
   alias Todo.{Repo, List}
