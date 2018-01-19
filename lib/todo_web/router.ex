@@ -22,7 +22,7 @@ defmodule TodoWeb.Router do
     post("/authenticate", AuthenticationController, :authenticate)
   end
 
-  scope "/api", Todo do
+  scope "/api", TodoWeb do
     pipe_through([:api, :token_auth])
 
     get("/lists", ListController, :index)
