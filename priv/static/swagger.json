@@ -1,0 +1,47 @@
+{
+  "swagger": "2.0",
+  "paths": {
+    "/api/authenticate": {
+      "post": {
+        "security": {
+          "type": "basic"
+        },
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "parameters": [],
+        "operationId": "TodoWeb.AuthenticationController.authenticate",
+        "description": "Authenticate with basic auth and get a token back"
+      }
+    }
+  },
+  "info": {
+    "version": "1.0",
+    "title": "Todoable",
+    "host": "https://intense-hamlet-87296.herokuapp.com/"
+  },
+  "host": "localhost:4000",
+  "definitions": {
+    "Token": {
+      "type": "object",
+      "title": "Authentication Token",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "Authentication Token"
+        },
+        "expires_at": {
+          "type": "datetime",
+          "description": "Expiration date"
+        }
+      },
+      "description": "Authentication token, expires in 20 minutes"
+    }
+  }
+}
