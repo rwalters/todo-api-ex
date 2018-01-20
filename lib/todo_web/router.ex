@@ -36,6 +36,10 @@ defmodule TodoWeb.Router do
     delete("/lists/:list_id/items/:id", ItemController, :delete)
   end
 
+  scope "/api/swagger" do
+    forward "/", PhoenixSwagger.Plug.SwaggerUI, otp_app: :todo, swagger_file: "swagger.json", disable_validator: true
+  end
+
   def swagger_info do
     %{
       info: %{
