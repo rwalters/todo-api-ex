@@ -5,6 +5,10 @@ defmodule TodoWeb.ItemView do
     render_one(item, TodoWeb.ItemView, "item.json")
   end
 
+  def render("finished.json", %{item: item}) do
+    "#{item.name} finished"
+  end
+
   def render("item.json", %{item: item}) do
     %{
       id: item.id,

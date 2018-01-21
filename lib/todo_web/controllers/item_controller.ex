@@ -27,7 +27,7 @@ defmodule TodoWeb.ItemController do
          {:ok, updated} <- Repo.update(changeset) do
       conn
       |> put_status(201)
-      |> render("show.json", item: updated)
+      |> render("finished.json", item: updated)
     else
       nil -> not_found(conn, "Item not found")
       :error -> malformed_request(conn)

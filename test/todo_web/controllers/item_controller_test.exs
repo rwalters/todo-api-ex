@@ -96,10 +96,7 @@ defmodule Todo.ItemControllerTest do
       |> with_valid_auth_token_header
       |> put("/api/lists/#{list_id}/items/#{id}/finish")
 
-    %{"name" => "Milk", "id" => _id, "src" => _src, "finished_at" => finished_at} =
-      json_response(conn, 201)
-
-    assert finished_at != nil
+    assert json_response(conn, 201) == "Milk finished"
   end
 
   test "PUT /lists/:list_id/items/:id/finish with nonexistent list throws 404", %{conn: conn} do
