@@ -101,6 +101,23 @@ defmodule TodoWeb.ListControllerTest do
     assert %{"name" => "Urgent Things", "id" => _, "src" => _} = json_response(conn, 201)
   end
 
+  test "POST /api/lists with duplicate name ", %{conn: conn} do
+    list = (user = create_user()) |> create_list(name: "Shopping")
+
+    payload = %{
+      list: %{
+        name: "Shopping"
+      }
+    }
+
+    conn =
+      conn
+      |> with_valid_auth_token_header
+      |> post("/api/lists", payload)
+
+    assert json_response(conn, 404) == %{"errors" => %{"detail" => "List not found"}}
+  end
+
   test "GET /api/list/:id without authentication throws 401", %{conn: conn} do
     list = create_user() |> create_list(name: "Shopping")
 

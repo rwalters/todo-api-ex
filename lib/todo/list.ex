@@ -21,5 +21,6 @@ defmodule Todo.List do
     list
     |> cast(attrs, [:name, :id])
     |> validate_required([:name, :user])
+    |> unique_constraint(:id_user_id)
   end
 end
