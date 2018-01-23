@@ -102,7 +102,7 @@ defmodule TodoWeb.ListControllerTest do
   end
 
   test "POST /api/lists with duplicate name ", %{conn: conn} do
-    list = (user = create_user()) |> create_list(name: "Shopping")
+    (user = create_user()) |> create_list(name: "Shopping")
 
     payload = %{
       list: %{
