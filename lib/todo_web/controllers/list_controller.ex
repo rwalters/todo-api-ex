@@ -23,7 +23,8 @@ defmodule TodoWeb.ListController do
 
   def create(conn, %{"list" => %{"name" => name}}) do
     with user <- Todo.UserSession.current_user(conn),
-         changeset <- Ecto.build_assoc(user, :lists, name: name),
+         changeset <- Ecto.build_assoc(user, :lists) |>
+         List.changeset(%{name: name}),
          {:ok, list} <- Repo.insert(changeset) do
       conn
       |> put_status(201)

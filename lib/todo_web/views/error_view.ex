@@ -13,8 +13,12 @@ defmodule TodoWeb.ErrorView do
     %{errors: %{detail: message}}
   end
 
-  def render("422.json", _assigns) do
-    %{errors: %{detail: "Bad request"}}
+  def render("422.json", %{errors: [{:user_id, {"Name must be unique", _}}|_]}) do
+    %{errors: %{detail: "Name must be unique"}}
+  end
+
+  def render("422.json", assigns) do
+    %{errors: %{detail: assigns[:errors] || "Bad request"}}
   end
 
   # In case no render clause matches or no
