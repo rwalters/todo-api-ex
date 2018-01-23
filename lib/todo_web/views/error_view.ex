@@ -14,10 +14,6 @@ defmodule TodoWeb.ErrorView do
   end
 
   def render("422.json", %{errors: errors}) do
-    IO.inspect(errors)
-    messages = Enum.map(errors, fn(tuple) -> elem(tuple, 1) |> elem(0) end)
-    %{errors: %{detail: messages}}
-
     Enum.map(errors, fn(tuple) -> {elem(tuple, 0), elem(tuple, 1) |> elem(0)} end)
     |> Map.new()
   end

@@ -23,5 +23,6 @@ defmodule Todo.List do
     |> validate_required([:name, :user_id])
     |> foreign_key_constraint(:user_id)
     |> unique_constraint(:name, name: :lists_user_id_name_index)
+    |> unsafe_validate_unique([:name, :user_id], Todo.Repo, message: "has already been taken")
   end
 end
