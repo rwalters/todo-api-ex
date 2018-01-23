@@ -58,14 +58,14 @@ defmodule TodoWeb.ListControllerTest do
     assert json_response(conn, 200) == %{
              "lists" => [
                %{
-                 "id" => list_1.id,
-                 "name" => list_1.name,
-                 "src" => "http://localhost:4000/lists/#{list_1.id}"
-               },
-               %{
                  "id" => list_2.id,
                  "name" => list_2.name,
                  "src" => "http://localhost:4000/lists/#{list_2.id}"
+               },
+               %{
+                 "id" => list_1.id,
+                 "name" => list_1.name,
+                 "src" => "http://localhost:4000/lists/#{list_1.id}"
                }
              ]
            }
@@ -99,6 +99,23 @@ defmodule TodoWeb.ListControllerTest do
       |> post("/api/lists", payload)
 
     assert %{"name" => "Urgent Things", "id" => _, "src" => _} = json_response(conn, 201)
+  end
+
+  test "POST /api/lists with duplicate name ", %{conn: conn} do
+    (user = create_user()) |> create_list(name: "Shopping")
+
+    payload = %{
+      list: %{
+        name: "Shopping"
+      }
+    }
+
+    conn =
+      conn
+      |> with_valid_auth_token_header(user)
+      |> post("/api/lists", payload)
+
+    assert json_response(conn, 422) == %{"name" => ["has already been taken"]}
   end
 
   test "GET /api/list/:id without authentication throws 401", %{conn: conn} do
