@@ -115,7 +115,7 @@ defmodule TodoWeb.ListControllerTest do
       |> with_valid_auth_token_header(user)
       |> post("/api/lists", payload)
 
-    assert json_response(conn, 422) == %{"errors" => %{"detail" => ["Name must be unique"]}}
+    assert json_response(conn, 422) == %{"name" => "has already been taken"}
   end
 
   test "GET /api/list/:id without authentication throws 401", %{conn: conn} do

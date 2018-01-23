@@ -22,7 +22,6 @@ defmodule Todo.List do
     |> cast(attrs, [:name, :id, :user_id])
     |> validate_required([:name, :user_id])
     |> foreign_key_constraint(:user_id)
-    |> unsafe_validate_unique([:user_id, :name], Todo.Repo, message: "Name must be unique")
     |> unique_constraint(:name, name: :lists_user_id_name_index)
   end
 end
