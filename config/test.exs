@@ -12,7 +12,7 @@ config :logger, level: :warn
 # Configure your database
 config :todo, Todo.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "isaac_priestley",
+  username: "ipriestley",
   password: "",
   database: "todo_test",
   hostname: "localhost",
