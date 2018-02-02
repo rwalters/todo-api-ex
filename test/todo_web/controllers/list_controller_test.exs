@@ -211,7 +211,8 @@ defmodule TodoWeb.ListControllerTest do
   end
 
   test "PATCH /api/lists/:id with authentication updates list", %{conn: conn} do
-    list = (user = create_user()) |> create_list(name: "Shopping")
+    user = create_user()
+    list = create_list(user, name: "Shopping")
 
     payload = %{
       list: %{
