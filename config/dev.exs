@@ -50,7 +50,7 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :todo, Todo.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "ipriestley",
+  username: System.get_env("DATABASE_USERNAME"),
   password: "",
   database: "todo_dev",
   hostname: "localhost",
