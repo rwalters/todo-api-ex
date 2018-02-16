@@ -20,12 +20,13 @@ defmodule TodoWeb.ListControllerTest do
     |> put_req_header("authorization", "Token token=\"#{Ecto.UUID.generate()}\"")
   end
 
-  def create_user(username \\ "username", password \\ "password") do
+  def create_user(username \\ "something", password \\ "password") do
     with {:ok, user} <-
            Todo.Repo.insert(%Todo.User{
              encrypted_username_password: Todo.User.encode(username, password)
-           }),
-         do: user
+           }) do
+      user
+    end
   end
 
   def create_list(user, name: name) do
@@ -46,7 +47,7 @@ defmodule TodoWeb.ListControllerTest do
     list_1 = create_list(user, name: "Shopping")
     list_2 = create_list(user, name: "Groceries")
 
-    different_user = create_user()
+    different_user = create_user("nobody")
     _list_3 = create_list(different_user, name: "Movies")
     _list_4 = create_list(different_user, name: "TV Shows")
 
@@ -161,7 +162,7 @@ defmodule TodoWeb.ListControllerTest do
 
   test "GET /api/list/:id returns 404 for list that doesn't belong to user", %{conn: conn} do
     list = (_user = create_user()) |> create_list(name: "Shopping")
-    different_user = create_user()
+    different_user = create_user("nobody")
 
     conn =
       conn
@@ -230,7 +231,7 @@ defmodule TodoWeb.ListControllerTest do
 
   test "PATCH /api/lists/:id returns 404 for someone else's list", %{conn: conn} do
     list = (_user = create_user()) |> create_list(name: "Shopping")
-    different_user = create_user()
+    different_user = create_user("nobody")
 
     payload = %{
       list: %{
@@ -303,8 +304,8 @@ defmodule TodoWeb.ListControllerTest do
   end
 
   test "DELETE /api/lists/:id returns 404 for someone else's list", %{conn: conn} do
-    list = (_user = create_user()) |> create_list(name: "Shopping")
-    different_user = create_user()
+    list = (_user = create_user("nobody")) |> create_list(name: "Shopping")
+    different_user = create_user("somebody")
 
     conn =
       conn

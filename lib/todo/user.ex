@@ -19,8 +19,15 @@ defmodule Todo.User do
     |> validate_required([:username, :password])
     |> validate_length(:password, min: 8)
     |> encrypt_username_and_password()
-    |> unique_constraint(:encrypted_username_password, name: :encrypted_username_password_index)
-    |> unsafe_validate_unique([:encrypted_username_password], Todo.Repo, message: "has already been taken")
+    |> unique_constraint(
+      :encrypted_username_password,
+      name: :users_encrypted_username_password_index
+    )
+    |> unsafe_validate_unique(
+      [:encrypted_username_password],
+      Todo.Repo,
+      message: "has already been taken"
+    )
   end
 
   def encrypt_username_and_password(
