@@ -7,7 +7,10 @@ defmodule Todo.UserTest do
   end
 
   test "changeset with duplicate username and password" do
-    changeset = Todo.User.changeset(%Todo.User{}, %{username: "username", password: "password"})
+    changeset = Todo.User.changeset(%Todo.User{}, %{username: "something", password: "password"})
+    Todo.Repo.insert(changeset)
+
+    changeset = Todo.User.changeset(%Todo.User{}, %{username: "something", password: "password"})
     assert !changeset.valid?
   end
 end
