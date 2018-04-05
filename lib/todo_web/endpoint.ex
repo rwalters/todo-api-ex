@@ -12,7 +12,7 @@ defmodule TodoWeb.Endpoint do
     at: "/",
     from: :todo,
     gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    only: ~w(css fonts images js favicon.ico robots.txt input.html)
   )
 
   # Code reloading can be explicitly enabled under the
