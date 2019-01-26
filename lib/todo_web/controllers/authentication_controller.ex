@@ -7,12 +7,12 @@ defmodule TodoWeb.AuthenticationController do
   use Timex
 
   def authenticate(conn, _params) do
-    user = Todo.UserSession.current_user(conn)
-
-    render(conn, "authenticate.json", %{
-      token: generate_and_cache_token(user.id),
-      expires_at: expires_at()
-    })
+    with user <- Todo.UserSession.current_user(conn) do
+      render(conn, "authenticate.json", %{
+        token: generate_and_cache_token(user.id),
+        expires_at: expires_at()
+      })
+    end
   end
 
   defp expires_at do
@@ -26,11 +26,11 @@ defmodule TodoWeb.AuthenticationController do
   end
 
   defp generate_and_cache_token(user_id) do
-    token = Ecto.UUID.generate()
+    with token <- Ecto.UUID.generate() do
+      Cache.start_link()
+      Cache.setex("token.#{token}", 1200, user_id)
 
-    Cache.start_link()
-    Cache.setex("token.#{token}", 1200, user_id)
-
-    token
+      token
+    end
   end
 end

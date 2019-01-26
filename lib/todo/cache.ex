@@ -33,9 +33,7 @@ defmodule Todo.Cache do
 
   # GenServer callbacks
 
-  defp get_key_with_timeout(state, key) do
-    %{ets_table_name: ets_table_name} = state
-
+  defp get_key_with_timeout(%{ets_table_name: ets_table_name} = _state, key) do
     with [{_key, {value, expires_at}}] when not is_nil(expires_at) <-
            :ets.lookup(ets_table_name, key),
          1 <- Timex.compare(expires_at, Timex.now()) do
@@ -44,7 +42,7 @@ defmodule Todo.Cache do
       [{_key, {value, nil}}] ->
         {:found, value}
 
-      x when x in -1..0 ->
+      x when x <= 0 ->
         :ets.delete(ets_table_name, key)
         {:expired}
 
