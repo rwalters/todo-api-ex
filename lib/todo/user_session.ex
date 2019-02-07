@@ -1,14 +1,17 @@
 defmodule Todo.UserSession do
+  alias Plug.Conn
+  alias Todo.Repo
+
   def login_user(conn, user) do
     conn
-    |> Plug.Conn.put_session(:user_id, user.id)
-    |> Plug.Conn.assign(:current_user, user)
+    |> Conn.put_session(:user_id, user.id)
+    |> Conn.assign(:current_user, user)
   end
 
   def logout(conn) do
     conn
-    |> Plug.Conn.delete_session(:user_id)
-    |> Plug.Conn.assign(:current_user, nil)
+    |> Conn.delete_session(:user_id)
+    |> Conn.assign(:current_user, nil)
   end
 
   def current_user(conn) do
@@ -16,8 +19,8 @@ defmodule Todo.UserSession do
   end
 
   defp load_current_user(conn) do
-    with id <- Plug.Conn.get_session(conn, :user_id),
-         user <- Todo.Repo.get!(Todo.User, id) |> Todo.Repo.preload(:lists) do
+    with id <- Conn.get_session(conn, :user_id),
+         user <- Repo.get!(Todo.User, id) |> Repo.preload(:lists) do
       login_user(conn, user)
 
       user
