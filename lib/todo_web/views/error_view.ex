@@ -13,7 +13,7 @@ defmodule TodoWeb.ErrorView do
     %{errors: %{detail: message}}
   end
 
-  def render("422.json", %{errors: errors}) do
+  def render("422.json", %{error: errors}) do
     Enum.map(errors, fn tuple -> {elem(tuple, 0), [elem(tuple, 1) |> elem(0)]} end)
     |> Map.new()
   end

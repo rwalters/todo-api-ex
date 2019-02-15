@@ -6,7 +6,8 @@ defmodule TodoWeb.ErrorHelpers do
   def malformed_request(conn, errors) do
     conn
     |> Plug.Conn.put_status(400)
-    |> Phoenix.Controller.render(ErrorView, "400.json", %{error: errors})
+    |> Phoenix.Controller.put_view(ErrorView)
+    |> Phoenix.Controller.render("400.json", %{error: errors})
   end
 
   def not_found(conn), do: not_found(conn, "Resource not found")
@@ -14,7 +15,8 @@ defmodule TodoWeb.ErrorHelpers do
   def not_found(conn, errors) do
     conn
     |> Plug.Conn.put_status(404)
-    |> Phoenix.Controller.render(ErrorView, "404.json", %{error: errors})
+    |> Phoenix.Controller.put_view(ErrorView)
+    |> Phoenix.Controller.render("404.json", %{error: errors})
   end
 
   def errors(conn), do: errors(conn, "Bad request")
@@ -22,6 +24,7 @@ defmodule TodoWeb.ErrorHelpers do
   def errors(conn, errors) do
     conn
     |> Plug.Conn.put_status(422)
-    |> Phoenix.Controller.render(ErrorView, "422.json", %{errors: errors})
+    |> Phoenix.Controller.put_view(ErrorView)
+    |> Phoenix.Controller.render("422.json", %{error: errors})
   end
 end

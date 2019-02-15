@@ -42,7 +42,7 @@ defmodule Todo.Mixfile do
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
       {:timex, "~> 3.1"},
-      {:poison, "~> 3.1"},
+      {:poison, "~> 3.1"}
     ]
   end
 

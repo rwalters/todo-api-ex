@@ -14,6 +14,10 @@ defmodule Todo.List do
     timestamps()
   end
 
+  def create_list(user, name: name) do
+    with {:ok, list} = Ecto.build_assoc(user, :lists, name: name) |> Todo.Repo.insert(), do: list
+  end
+
   @doc """
   Builds a changeset based on the `struct` and `attrs`.
   """
