@@ -23,10 +23,7 @@ defmodule TodoWeb.ListController do
 
   def create(conn, %{"list" => %{"name" => name}}) do
     with user <- Todo.UserSession.current_user(conn),
-         changeset <-
-           Ecto.build_assoc(user, :lists)
-           |> List.changeset(%{name: name}),
-         {:ok, list} <- Repo.insert(changeset) do
+         {:ok, list} <- Todo.List.create(user, name: name) do
       conn
       |> put_status(201)
       |> render("create.json", list: list)

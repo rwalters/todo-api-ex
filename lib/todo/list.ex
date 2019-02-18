@@ -15,7 +15,9 @@ defmodule Todo.List do
   end
 
   def create(user, name: name) do
-    with {:ok, list} = Ecto.build_assoc(user, :lists, name: name) |> Todo.Repo.insert(), do: list
+    Ecto.build_assoc(user, :lists)
+    |> List.changeset(%{name: name})
+    |> Todo.Repo.insert()
   end
 
   def update(list, params) do
