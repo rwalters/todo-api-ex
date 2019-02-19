@@ -1,25 +1,44 @@
-FROM bitwalker/alpine-elixir:1.8.0
-MAINTAINER Paul Schoenfelder <paulschoenfelder@gmail.com>
+#===========
+#Build Stage
+#===========
+FROM bitwalker/alpine-elixir-phoenix:latest as build
 
-# Important!  Update this no-op ENV variable when this Dockerfile
-# is updated with the current date. It will force refresh of all
-# of the base images and things like `apt-get update` won't be using
-# old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT=2019-01-15 \
-    # Set this so that CTRL+G works properly
-    TERM=xterm
+#Copy the source folder into the Docker image
+COPY . .
 
-# Install NPM
-RUN \
-    mkdir -p /opt/app && \
-    chmod -R 777 /opt/app && \
-    apk update && \
-    apk --no-cache --update add \
-      git make g++ wget curl inotify-tools \
-      nodejs nodejs-npm && \
-    npm install npm -g --no-progress && \
-    update-ca-certificates --fresh && \
-    rm -rf /var/cache/apk/*
+ENV SECRET_KEY_BASE=1234
+
+#Install dependencies and build Release
+RUN export MIX_ENV=prod && \
+    export SECRET_KEY_BASE=1234 && \
+    rm -Rf _build && \
+    mix do deps.get, \
+    deps.compile && \
+    mix release
+
+RUN mkdir /export
+
+#Extract Release archive to /rel for copying in next stage
+RUN APP_NAME="todo" && \
+    RELEASE_DIR=`ls -d _build/prod/rel/todo/releases/*/` && \
+    tar -xf "$RELEASE_DIR/./$APP_NAME.tar.gz" -C /export
+
+#================
+#Deployment Stage
+#================
+# FROM pentacent/alpine-erlang-base:latest
+
+#Set environment variables and expose port
+EXPOSE 4000
+ENV REPLACE_OS_VARS=true \
+    PORT=4000
+
+#Change user
+# USER default
+
+#Copy and extract .tar.gz Release file from the previous stage
+# COPY --from=build /export/ .
+# COPY /export/ .
 
 # Add local node module binaries to PATH
 ENV PATH=./node_modules/.bin:$PATH \
@@ -27,10 +46,11 @@ ENV PATH=./node_modules/.bin:$PATH \
     HEX_HOME=/opt/hex \
     HOME=/opt/app
 
-# Install Hex+Rebar
 RUN mix local.hex --force && \
     mix local.rebar --force
 
-WORKDIR /opt/app
+RUN ls /opt
+RUN ls /opt/app
 
-CMD ["/bin/sh"]
+#Set default entrypoint and command
+CMD mix do ecto.create, ecto.migrate, phx.server
