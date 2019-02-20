@@ -1,19 +1,20 @@
-FROM bitwalker/alpine-elixir-phoenix:latest
+# Use an official Elixir runtime as a parent image
+FROM elixir:latest
 
-# Set exposed ports
-EXPOSE 5000
-ENV PORT=5000 MIX_ENV=prod SECRET_KEY_BASE=1234 PGPORT=5432
+RUN apt-get update && \
+  apt-get install -y postgresql-client
 
-# Cache elixir deps
-ADD mix.exs mix.lock ./
-RUN mix do deps.get, deps.compile
+# Create app directory and copy the Elixir projects into it
+RUN mkdir /app
+COPY . /app
+WORKDIR /app
 
-ADD . .
+# Install hex package manager
+RUN mix local.hex --force
 
-# Run frontend build, compile, and digest assets
-RUN cd - && \
-    mix do compile, phx.digest
+# Compile the project
+RUN mix do compile
 
-USER default
+RUN chmod +x /app/entrypoint.sh
 
-CMD ["mix", "phx.server"]
+CMD ["/app/entrypoint.sh"]

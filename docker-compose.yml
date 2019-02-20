@@ -11,12 +11,12 @@ services:
       context: .
     environment:
       # Variables to connect to our Postgres server
-      PGUSER: ipriestley
-      PGPASSWORD:
-      PGDATABASE: todo_dev
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: todoable
       PGPORT: 5432
       # Hostname of our Postgres container
-      PGHOST: localhost
+      PGHOST: db
     ports:
       # Mapping the port to make the Phoenix app accessible outside of the container
       - "4000:4000"
@@ -28,11 +28,10 @@ services:
     image: postgres:9.6
     environment:
       # Set user/password for Postgres
-      POSTGRES_USER: ipriestley
-      POSTGRES_PASSWORD:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       # Set a path where Postgres should store the data
       PGDATA: /var/lib/postgresql/data/pgdata
-      PORT: 4000
     restart: always
     volumes:
       - pgdata:/var/lib/postgresql/data
