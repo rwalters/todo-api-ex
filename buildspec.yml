@@ -9,7 +9,7 @@ phases:
   build:
     commands:
       - docker pull ${REPOSITORY_URI}:master || true
-      - docker build --build-arg APP_TAG=${APP_TAG} --build-arg APP_VERSION=${APP_VERSION} --build-arg NPM_TOKEN=${NPM_TOKEN} --cache-from=${REPOSITORY_URI}:master --tag "${APP_NAME}:${APP_VERSION}" .
+      - docker build --build-arg APP_TAG=${APP_TAG} --build-arg APP_VERSION=${APP_VERSION} --cache-from=${REPOSITORY_URI}:master --tag "${APP_NAME}:${APP_VERSION}" .
       - docker tag "${APP_NAME}:${APP_VERSION}" "${REPOSITORY_URI}:${APP_TAG}"
       - docker tag "${APP_NAME}:${APP_VERSION}" "${REPOSITORY_URI}:${BRANCH_NAME}"
   post_build:

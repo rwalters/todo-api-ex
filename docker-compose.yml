@@ -4,11 +4,12 @@ version: '3'
 # Containers we are going to run
 services:
   # Our Phoenix container
-  phoenix:
+  web:
     # The build parameters for this container.
     build:
       # Here we define that it should build from the current directory
       context: .
+    env_file: .env
     environment:
       # Variables to connect to our Postgres server
       PGUSER: postgres
