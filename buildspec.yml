@@ -1,0 +1,18 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - APP_VERSION="$(git rev-parse HEAD)"
+      - APP_TAG="git-$(git rev-parse HEAD | cut -c 1-12)"
+      - BRANCH_NAME="$(git name-rev --name-only $(git rev-parse HEAD) | sed 's/[^-a-z0-9]/-/g')"
+  build:
+    commands:
+      - docker pull ${REPOSITORY_URI}:master || true
+      - docker build --build-arg APP_TAG=${APP_TAG} --build-arg APP_VERSION=${APP_VERSION} --build-arg NPM_TOKEN=${NPM_TOKEN} --cache-from=${REPOSITORY_URI}:master --tag "${APP_NAME}:${APP_VERSION}" .
+      - docker tag "${APP_NAME}:${APP_VERSION}" "${REPOSITORY_URI}:${APP_TAG}"
+      - docker tag "${APP_NAME}:${APP_VERSION}" "${REPOSITORY_URI}:${BRANCH_NAME}"
+  post_build:
+    commands:
+      - docker push "${REPOSITORY_URI}:${APP_TAG}"
+      - docker push "${REPOSITORY_URI}:${BRANCH_NAME}"
