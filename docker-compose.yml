@@ -9,7 +9,6 @@ services:
     build:
       # Here we define that it should build from the current directory
       context: .
-    env_file: .env
     environment:
       # Variables to connect to our Postgres server
       PGUSER: postgres
